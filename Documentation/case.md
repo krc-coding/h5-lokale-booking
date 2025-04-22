@@ -51,16 +51,49 @@ Student (Guest):
 
 - Can view bookings
 - Doesn't need login.
+- Can request room booking.
 
 ## Functional requirements:
 
-### Backend:
+### User management:
 
 
-### Frontend:
+### Rooms:
 
 
+### Bookings:
 
+- Templates for default page design.
+- Single day view:
+    - Shows all rooms and their bookings.
+- Single week view:
+    - Shows all bookings in the current week for a specific room.
+
+- Custom time duration view: 
+    - Shows all bookings in the time duration for a single room.
+
+- Bookings should have custom booking durations.
+    - The min. duration is 5 minutes.
+    - The max. duration is to the end of the current day.
+
+- Create booking view:
+    - A booking must include: 
+        * A title.
+        * Who created it.
+        * Which room it is for.
+        * start time.
+    - A booking can include:
+        * A description.
+        * end time, if it's not provided then it goes to the end of the current day.
+
+- Details view:
+    - When a user clicks on a booking, it opens the details view.
+    - Contains all info that have been entered during creation.
+    - If the teacher who created it, or an admin opens the details view, then there should be an edit icon to allow updating the booking.
+
+---
+---
+---
 
 Tids system.
 
@@ -69,7 +102,7 @@ desktop side.
 
 når man trygger på en booking, skal man kunne se mere info omkring booking.
 når man trygger på et lokale så viser den kun bookings for det lokale.
-når man åbner detajleret info for en booking, så vil den underviser som har oprettet booking, samt admins kunne se et pencil ikon, som man kan trygge for at redigere booking.
+(når man åbner detajleret info for en booking, så vil den underviser som har oprettet booking, samt admins kunne se et pencil ikon, som man kan trygge for at redigere booking.)
 
 Alle bruger:
 
@@ -79,23 +112,23 @@ Alle bruger:
     - Det skal være muligt at søge/filterer baseret på grupperinger.
 
 
-Underviser bruger:
+(Underviser bruger:
 - kan booke lokaler
 - kan redigerer egne bookings
-- kan slette egne bookings
+- kan slette egne bookings)
 
-Admin bruger:
+(Admin bruger:
 - Det skal være muligt at oprette grupperinger af lokaler.
 - Kan redigerer alle bookings (CRUD)
 - Kan oprette lokaler
 - Kan slette lokaler
 - Kan tilføje nye bruger
-- Kan slette brugerer.
+- Kan slette brugerer.)
 
-bruger grupper:
+(bruger grupper:
 - elever (Kræver ikke login)
 - underviser (Kræver login)
-- admin (kræver login)
+- admin (kræver login))
 
 Backend:
 - auth using jwt
@@ -115,12 +148,12 @@ Frontend:
     - CRUD rooms
     - CRUD groups
 
-- Opret booking side.
-- Default side
+(- Opret booking side.)
+
+(- Default side
     - Day page with all rooms + bookings
     - Week page for single room + bookings
-    - Custom time duration page for single room + bookings.
-
+    - Custom time duration page for single room + bookings.)
 
 Andet:
 - Electron desktop/mobile app
