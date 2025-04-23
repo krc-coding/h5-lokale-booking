@@ -70,11 +70,9 @@ class UserController extends Controller
             'role' => 'string|in:teacher,admin',
         ]);
 
-        $user = $user->update([
-            'disabled' => $validated['disabled'] ?? $user->disabled,
-            'role' => $validated['role'] ?? $user->role,
-        ]);
-
+        $user->disabled = $validated['disabled'] ?? $user->disabled;
+        $user->role = $validated['role'] ?? $user->role;
+        $user->save();
         return response()->json(['message' => 'User updated successfully', 'user' => $user], 200);
     }
 
