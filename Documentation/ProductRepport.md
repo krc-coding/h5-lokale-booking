@@ -131,11 +131,15 @@ Student (Guest):
     - Contains all info that have been entered during creation.
     - If the teacher who created it, or an admin opens the details view, then there should be an edit icon to allow updating the booking.
 
+### Web page:
+
+- Should only contain views relevant for students/guests.
+
 ### App:
 
-- Desktop app using Electronjs.
-    - Requires authenticable user.
-    - Designed for teachers to make it easier to manage bookings.
+- Should contain views relevant for students/guests.
+- Should contain a login page for teachers and admins.
+- Should contain pages for teachers and admins to easily manage bookings and other parts of the room booking system.
 
 ## Nice to have features:
 
