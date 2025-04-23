@@ -75,7 +75,7 @@ class UserController extends Controller
             'role' => $validated['role'] ?? $user->role,
         ]);
 
-        return response()->json(['message' => 'User updated successfully', 'user' => $user], 201);
+        return response()->json(['message' => 'User updated successfully', 'user' => $user], 200);
     }
 
     public function changePassword(user $user, Request $request)
