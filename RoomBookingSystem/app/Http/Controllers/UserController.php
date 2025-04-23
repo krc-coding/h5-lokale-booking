@@ -94,7 +94,7 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        return response()->json(['message' => 'Password changed successfully', 'user' => $user], 201);
+        return response()->json(['message' => 'Password changed successfully', 'user' => $user], 200);
     }
 
     public function deleteUser(user $user)
