@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
 
-Route::prefix('/user')->group(function () {
-    Route::middleware('auth:api')->group(function () {
+Route::middleware('auth:api')->group(function () {
+    Route::prefix('/user')->group(function () {
         Route::post('/createUser', [UserController::class, 'createUser']);
         Route::get('/getUser/{user}', [UserController::class, 'getUser']);
         Route::get('/getAllUsers', [UserController::class, 'getAllUsers']);
