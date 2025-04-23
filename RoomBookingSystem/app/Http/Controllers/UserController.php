@@ -90,9 +90,8 @@ class UserController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        $user = $user->update([
-            'password' => Hash::make($validated['password']),
-        ]);
+        $user->password = Hash::make($validated['password']);
+        $user->save();
 
         return response()->json(['message' => 'Password changed successfully', 'user' => $user], 200);
     }
