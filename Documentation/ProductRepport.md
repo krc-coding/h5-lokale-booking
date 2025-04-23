@@ -163,8 +163,7 @@ C-->D
 
 
 
-# REST:
-Tids system.
+<!-- Tids system.
 
 mobil side.
 desktop side.
@@ -226,4 +225,4 @@ Frontend:
 
 (Andet:
 - Electron desktop/mobile app
-- Websocket communication, so that when a change is made, then all devices are notified about the change and can refresh)
+- Websocket communication, so that when a change is made, then all devices are notified about the change and can refresh) -->
