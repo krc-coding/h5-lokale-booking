@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->timestamp('start_time');
             $table->timestamp('end_time');
-            $table->foreignId('users_id')->constrained();
-            $table->foreignId('rooms_id')->constrained();
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('room_id')->constrained();
             $table->timestamps();
         });
     }
