@@ -10,20 +10,20 @@ The room booking system should include as many of the following requirements:
 
 User management:
 
-- Profile view:
-- User management view:
+- Profile view.
+- User management view.
 
 Rooms:
 
-- Room management view:
-- Group management view:
+- Room management view.
+- Group management view.
 
 Bookings:
 
 - Templates for default page design.
-- Day view:
-- Week view:
-- Custom time duration view: 
+- Day view.
+- Week view.
+- Custom time duration view. 
 - Bookings should have custom booking durations.
-- Create booking view:
-- Details view:
+- Create booking view.
+- Details view.
