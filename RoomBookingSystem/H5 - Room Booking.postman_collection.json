@@ -79,213 +79,213 @@
 		},
 		{
 			"name": "User",
-				"item": [
-					{
-						"name": "CreateUser",
-						"request": {
-							"method": "POST",
-							"header": [
-								{
-									"key": "Accept",
-									"value": "application/json",
-									"type": "text"
+			"item": [
+				{
+					"name": "CreateUser",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirmation\": \"{{password}}\",\r\n    \"role\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							],
-							"body": {
-								"mode": "raw",
-								"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirmation\": \"{{password}}\",\r\n    \"role\": \"admin\"\r\n}",
-								"options": {
-									"raw": {
-										"language": "json"
-									}
-								}
-							},
-							"url": {
-								"raw": "{{base_url}}/api/user/createUser",
-								"host": [
-									"{{base_url}}"
-								],
-								"path": [
-									"api",
-									"user",
-									"createUser"
-								]
 							}
 						},
-						"response": []
+						"url": {
+							"raw": "{{base_url}}/api/user/createUser",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"createUser"
+							]
+						}
 					},
-					{
-						"name": "getAllUser",
-						"protocolProfileBehavior": {
-							"disableBodyPruning": true
-						},
-						"request": {
-							"method": "GET",
-							"header": [
-								{
-									"key": "Accept",
-									"value": "application/json",
-									"type": "text"
-								}
-							],
-							"body": {
-								"mode": "raw",
-								"raw": "",
-								"options": {
-									"raw": {
-										"language": "json"
-									}
-								}
-							},
-							"url": {
-								"raw": "{{base_url}}/api/user/getAllUsers",
-								"host": [
-									"{{base_url}}"
-								],
-								"path": [
-									"api",
-									"user",
-									"getAllUsers"
-								]
-							}
-						},
-						"response": []
+					"response": []
+				},
+				{
+					"name": "getAllUser",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
 					},
-					{
-						"name": "getUser",
-						"protocolProfileBehavior": {
-							"disableBodyPruning": true
-						},
-						"request": {
-							"method": "GET",
-							"header": [
-								{
-									"key": "Accept",
-									"value": "application/json",
-									"type": "text"
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							],
-							"body": {
-								"mode": "raw",
-								"raw": "",
-								"options": {
-									"raw": {
-										"language": "json"
-									}
-								}
-							},
-							"url": {
-								"raw": "{{base_url}}/api/user/getUser/{{userId}}",
-								"host": [
-									"{{base_url}}"
-								],
-								"path": [
-									"api",
-									"user",
-									"getUser",
-									"{{userId}}"
-								]
 							}
 						},
-						"response": []
+						"url": {
+							"raw": "{{base_url}}/api/user/getAllUsers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"getAllUsers"
+							]
+						}
 					},
-					{
-						"name": "editUser",
-						"request": {
-							"method": "PUT",
-							"header": [
-								{
-									"key": "Accept",
-									"value": "application/json",
-									"type": "text"
-								}
-							],
-							"body": {
-								"mode": "raw",
-								"raw": "{\r\n    // non of them are required and if not set will take what the user already have\r\n    \"role\": \"admin\",\r\n    \"disabled\": false\r\n}",
-								"options": {
-									"raw": {
-										"language": "json"
-									}
-								}
-							},
-							"url": {
-								"raw": "{{base_url}}/api/user/editUser/{{userId}}",
-								"host": [
-									"{{base_url}}"
-								],
-								"path": [
-									"api",
-									"user",
-									"editUser",
-									"{{userId}}"
-								]
-							}
-						},
-						"response": []
+					"response": []
+				},
+				{
+					"name": "getUser",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
 					},
-					{
-						"name": "ChangePassword",
-						"request": {
-							"method": "PUT",
-							"header": [
-								{
-									"key": "Accept",
-									"value": "application/json",
-									"type": "text"
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							],
-							"body": {
-								"mode": "raw",
-								"raw": "{\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirmation\": \"{{password}}\"\r\n}",
-								"options": {
-									"raw": {
-										"language": "json"
-									}
-								}
-							},
-							"url": {
-								"raw": "{{base_url}}/api/user/changePassword/{{userId}}",
-								"host": [
-									"{{base_url}}"
-								],
-								"path": [
-									"api",
-									"user",
-									"changePassword",
-									"{{userId}}"
-								]
 							}
 						},
-						"response": []
+						"url": {
+							"raw": "{{base_url}}/api/user/getUser/{{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"getUser",
+								"{{userId}}"
+							]
+						}
 					},
-					{
-						"name": "DeleteUser",
-						"request": {
-							"method": "DELETE",
-							"header": [
-								{
-									"key": "Accept",
-									"value": "application/json",
-									"type": "text"
+					"response": []
+				},
+				{
+					"name": "editUser",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    // non of them are required and if not set will take what the user already have\r\n    \"role\": \"admin\",\r\n    \"disabled\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							],
-							"url": {
-								"raw": "{{base_url}}/api/user/deleteUser/{{userId}}",
-								"host": [
-									"{{base_url}}"
-								],
-								"path": [
-									"api",
-									"user",
-									"deleteUser",
-									"{{userId}}"
-								]
 							}
 						},
-						"response": []
-					}
-				],
+						"url": {
+							"raw": "{{base_url}}/api/user/editUser/{{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"editUser",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ChangePassword",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirmation\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user/changePassword/{{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"changePassword",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteUser",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/user/deleteUser/{{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"deleteUser",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "Room",
