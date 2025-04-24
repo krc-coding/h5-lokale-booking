@@ -1,0 +1,87 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Resources\RoomResource;
+use App\Models\Room;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+class RoomController extends Controller
+{
+    public function getRoom(Room $room)
+    {
+        return new RoomResource($room);
+    }
+
+    public function getAllRooms()
+    {
+        return Room::all()->mapInto(RoomResource::class);
+    }
+
+    public function createRoom(Request $request)
+    {
+        $user = auth()->user();
+        if ($user->role !== "admin") {
+            return response()->json(["message" => "Unauthorized"], 401);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'string|max:255',
+            'room_number' => 'required|string|max:255',
+            'max_people' => 'required|integer',
+        ]);
+
+        $room = Room::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'room_number' => $request->room_number,
+            'max_people' => $request->max_people
+        ]);
+
+        return new RoomResource($room);
+    }
+
+    public function updateRoom(Request $request, Room $room)
+    {
+        $user = auth()->user();
+        if ($user->role !== "admin") {
+            return response()->json(["message" => "Unauthorized"], 401);
+        }
+
+        $request->validate([
+            'name' => 'string|max:255',
+            'description' => 'string|max:255',
+            'room_number' => 'string|max:255',
+            'max_people' => 'integer',
+        ]);
+
+        if ($request->name) {
+            $room->name = $request->name;
+        }
+        if ($request->description) {
+            $room->description = $request->description;
+        }
+        if ($request->room_number) {
+            $room->room_number = $request->room_number;
+        }
+        if ($request->max_people) {
+            $room->max_people = $request->max_people;
+        }
+        $room->save();
+
+        return new RoomResource($room);
+    }
+
+    public function deleteRoom(Room $room)
+    {
+        $user = auth()->user();
+        if ($user->role !== "admin") {
+            return response()->json(["message" => "Unauthorized"], 401);
+        }
+
+        $room->delete();
+        return response()->json([], 204);
+    }
+}
