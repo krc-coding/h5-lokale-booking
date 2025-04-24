@@ -16,9 +16,8 @@ class Room extends Model
 
     protected $hidden = [];
 
-    // this is to when groups is created
-    // public function groups(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(Group::class);
-    // }
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class);
+    }
 }

@@ -71,7 +71,10 @@ class UserController extends Controller
         ]);
 
         $user->disabled = $validated['disabled'] ?? $user->disabled;
-        $user->role = $validated['role'] ?? $user->role;
+        if ($user->role !== 'systemAdmin'){
+            $user->role = $validated['role'] ?? $user->role;
+        }
+
         $user->save();
         return response()->json(['message' => 'User updated successfully', 'user' => $user], 200);
     }
@@ -100,6 +103,10 @@ class UserController extends Controller
 
         if ($authUser->role !== 'admin' && $authUser->role !== 'systemAdmin' || $authUser->id == $user->id) {
             return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        if ($user->role == 'systemAdmin'){
+            return response()->json(['message' => 'System admin cannot be deleted but only dissabled'], 401);
         }
 
         $user->delete();

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\GroupController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -27,5 +28,18 @@ Route::prefix('/room')->group(function () {
         Route::post('/create', [RoomController::class, 'createRoom']);
         Route::put('/update/{room}', [RoomController::class, 'updateRoom']);
         Route::delete('/delete/{room}', [RoomController::class, 'deleteRoom']);
+    });
+});
+
+Route::prefix('/group')->group(function () {
+    Route::get('/getGroups', [GroupController::class, 'getGroups']);
+    Route::get('/getGroupById/{group}', [GroupController::class, 'getGroupById']);
+    
+    Route::middleware('auth:api')->group(function () {
+        Route::post('/createGroup', [GroupController::class, 'createGroup']);
+        Route::put('/updateGroupName/{group}', [GroupController::class, 'updateGroupName']);
+        Route::put('/addRoomsToGroup/{group}', [GroupController::class, 'addRoomsToGroup']);
+        Route::put('/removeRoomsFromGroup/{group}', [GroupController::class, 'removeRoomsFromGroup']);
+        Route::delete('/deleteGroup/{group}', [GroupController::class, 'deleteGroup']);
     });
 });
