@@ -40,6 +40,6 @@ Route::prefix('/group')->group(function () {
         Route::put('/updateGroupName/{group}', [GroupController::class, 'updateGroupName']);
         Route::put('/addRoomsToGroup/{group}', [GroupController::class, 'addRoomsToGroup']);
         Route::put('/removeRoomsFromGroup/{group}', [GroupController::class, 'removeRoomsFromGroup']);
-        Route::put('/deleteGroup/{group}', [GroupController::class, 'deleteGroup']);
+        Route::delete('/deleteGroup/{group}', [GroupController::class, 'deleteGroup']);
     });
 });
