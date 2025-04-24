@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "c855bbb3-d557-4b1e-b69d-e94fa6ade86d",
+		"_postman_id": "b6cc9ecd-de55-480b-9428-c65b3966893c",
 		"name": "H5 - Room Booking",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "37681259"
+		"_exporter_id": "37657823"
 	},
 	"item": [
 		{
@@ -442,6 +442,195 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Group",
+			"item": []
+		},
+		{
+			"name": "Booking",
+			"item": [
+				{
+					"name": "CreateBooking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    // You can remove description and end_time if you want.\r\n    \"title\": \"booking\",\r\n    \"description\": \"why did i make a booking?\",\r\n    \"start_time\": \"2025-04-22T13:30:00\",\r\n    \"end_time\": \"2025-04-22T14:00:00\",\r\n    \"room_id\": {{roomId}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/booking/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"booking",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateBooking",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    // You can remove them all if you want to.\r\n    \"title\": \"booking\",\r\n    \"DESCRIPTION\": \"WHY DID I MAKE A BOOKING?\",\r\n    \"START_TIME\": \"2025-04-22T13:30:00\",\r\n    \"end_time\": \"2025-04-22T14:00:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/booking/update/{{bookingId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"booking",
+								"update",
+								"{{bookingId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteBooking",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/booking/delete/{{bookingId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"booking",
+								"delete",
+								"{{bookingId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllBookings",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/booking/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"booking",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetBookingById",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/booking/{{bookingId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"booking",
+								"{{bookingId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetBookingByRoomId",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/booking/room/{{roomId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"booking",
+								"room",
+								"{{roomId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"auth": {
@@ -504,6 +693,11 @@
 		},
 		{
 			"key": "roomId",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "bookingId",
 			"value": "",
 			"type": "default"
 		}
