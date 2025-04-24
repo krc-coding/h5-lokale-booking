@@ -22,9 +22,8 @@ class Room extends Model
         return $this->hasMany(Booking::class);
     }
 
-    // this is to when groups is created
-    // public function groups(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(Group::class);
-    // }
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class);
+    }
 }
