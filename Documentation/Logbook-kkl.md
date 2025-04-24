@@ -4,4 +4,6 @@
 - Created auth controller
 - Make system use jwt tokens
 
-
+### 23-04-2025
+- Created migrations
+- Created CRUD room controller
