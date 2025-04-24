@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c855bbb3-d557-4b1e-b69d-e94fa6ade86d",
+		"_postman_id": "737c1e30-4bc3-48bb-9d05-49ae436ed669",
 		"name": "H5 - Room Booking",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "37681259"
@@ -115,6 +115,43 @@
 					"response": []
 				},
 				{
+					"name": "getAllUser",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user/getAllUsers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"getAllUsers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "getUser",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -147,43 +184,6 @@
 								"user",
 								"getUser",
 								"{{userId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "getAllUser",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/api/user/getAllUsers",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"user",
-								"getAllUsers"
 							]
 						}
 					},
@@ -270,15 +270,6 @@
 								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
 							"raw": "{{base_url}}/api/user/deleteUser/{{userId}}",
 							"host": [
@@ -289,6 +280,392 @@
 								"user",
 								"deleteUser",
 								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Room",
+			"item": [
+				{
+					"name": "CreateRoom",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"room name\",\r\n    \"description\": \"description\",\r\n    \"room_number\": \"A1.39\",\r\n    \"max_people\": 12\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/room/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"room",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateRoom",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    // You can use 1 or all of them\r\n    \"name\": \"new room name\"\r\n    // \"description\": \"description\",\r\n    // \"room_number\": \"A1.39\",\r\n    // \"max_people\": 12\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/room/update/{{roomId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"room",
+								"update",
+								"{{roomId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteRoom",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/room/delete/{{roomId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"room",
+								"delete",
+								"{{roomId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllRooms",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/room/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"room",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetSingleRoom",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/room/{{roomId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"room",
+								"{{roomId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Group",
+			"item": [
+				{
+					"name": "getGroups",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/group/getGroups",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"group",
+								"getGroups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getGroupById",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/group/getGroupById/{{groupId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"group",
+								"getGroupById",
+								"{{groupId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createGroup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"test\",\r\n    \"room_ids\": [1,2]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/group/createGroup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"group",
+								"createGroup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateGroupName",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"test2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/group/updateGroupName/{{groupId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"group",
+								"updateGroupName",
+								"{{groupId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addRoomsToGroup",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"room_ids\": [1,2]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/group/addRoomsToGroup/{{groupId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"group",
+								"addRoomsToGroup",
+								"{{groupId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "removeRoomsFromGroup",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"room_ids\": [1,2]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/group/removeRoomsFromGroup/{{groupId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"group",
+								"removeRoomsFromGroup",
+								"{{groupId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteGroup",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/group/deleteGroup/{{groupId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"group",
+								"deleteGroup",
+								"{{groupId}}"
 							]
 						}
 					},
@@ -352,6 +729,11 @@
 		},
 		{
 			"key": "userId",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "roomId",
 			"value": "",
 			"type": "default"
 		}
