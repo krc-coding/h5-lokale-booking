@@ -15,7 +15,7 @@ class GroupController extends Controller
 
     public function getGroupById(Group $group)
     {
-        $group = Group::with('rooms')->find($group->$id);
+        $group = Group::with('rooms')->find($group->id);
 
         if (!$group) {
             return response()->json(['message' => 'Group not found'], 404);
