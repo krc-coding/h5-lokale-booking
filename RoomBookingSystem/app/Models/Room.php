@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+class Room extends Model
+{
+    protected $fillable = [
+        'name',
+        'description',
+        'room_number',
+        'max_people',
+    ];
+
+    protected $hidden = [];
+
+    // this is to when groups is created
+    // public function groups(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(Group::class);
+    // }
+}
