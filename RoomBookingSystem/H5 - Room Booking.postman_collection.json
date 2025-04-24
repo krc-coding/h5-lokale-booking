@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b6cc9ecd-de55-480b-9428-c65b3966893c",
+		"_postman_id": "198f99de-5897-4da4-a0b9-16edbd49a7e2",
 		"name": "H5 - Room Booking",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "37657823"
@@ -924,6 +924,11 @@
 		},
 		{
 			"key": "bookingId",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "groupId",
 			"value": "",
 			"type": "default"
 		}
