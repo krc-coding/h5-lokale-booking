@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('group_room', function (Blueprint $table) {
-            $table->foreignId('group_id')->constrained();
-            $table->foreignId('room_id')->constrained();
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('disabled')->default(false);
         });
     }
 
@@ -22,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rooms_groups');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('disabled');
+        });
     }
 };

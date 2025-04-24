@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "e2a1e889-ef15-4f42-8811-97fb881bc58e",
+		"_postman_id": "c855bbb3-d557-4b1e-b69d-e94fa6ade86d",
 		"name": "H5 - Room Booking",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "37657823"
+		"_exporter_id": "37681259"
 	},
 	"item": [
 		{
@@ -76,6 +76,216 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "User",
+				"item": [
+					{
+						"name": "CreateUser",
+						"request": {
+							"method": "POST",
+							"header": [
+								{
+									"key": "Accept",
+									"value": "application/json",
+									"type": "text"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirmation\": \"{{password}}\",\r\n    \"role\": \"admin\"\r\n}",
+								"options": {
+									"raw": {
+										"language": "json"
+									}
+								}
+							},
+							"url": {
+								"raw": "{{base_url}}/api/user/createUser",
+								"host": [
+									"{{base_url}}"
+								],
+								"path": [
+									"api",
+									"user",
+									"createUser"
+								]
+							}
+						},
+						"response": []
+					},
+					{
+						"name": "getAllUser",
+						"protocolProfileBehavior": {
+							"disableBodyPruning": true
+						},
+						"request": {
+							"method": "GET",
+							"header": [
+								{
+									"key": "Accept",
+									"value": "application/json",
+									"type": "text"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "",
+								"options": {
+									"raw": {
+										"language": "json"
+									}
+								}
+							},
+							"url": {
+								"raw": "{{base_url}}/api/user/getAllUsers",
+								"host": [
+									"{{base_url}}"
+								],
+								"path": [
+									"api",
+									"user",
+									"getAllUsers"
+								]
+							}
+						},
+						"response": []
+					},
+					{
+						"name": "getUser",
+						"protocolProfileBehavior": {
+							"disableBodyPruning": true
+						},
+						"request": {
+							"method": "GET",
+							"header": [
+								{
+									"key": "Accept",
+									"value": "application/json",
+									"type": "text"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "",
+								"options": {
+									"raw": {
+										"language": "json"
+									}
+								}
+							},
+							"url": {
+								"raw": "{{base_url}}/api/user/getUser/{{userId}}",
+								"host": [
+									"{{base_url}}"
+								],
+								"path": [
+									"api",
+									"user",
+									"getUser",
+									"{{userId}}"
+								]
+							}
+						},
+						"response": []
+					},
+					{
+						"name": "editUser",
+						"request": {
+							"method": "PUT",
+							"header": [
+								{
+									"key": "Accept",
+									"value": "application/json",
+									"type": "text"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\r\n    // non of them are required and if not set will take what the user already have\r\n    \"role\": \"admin\",\r\n    \"disabled\": false\r\n}",
+								"options": {
+									"raw": {
+										"language": "json"
+									}
+								}
+							},
+							"url": {
+								"raw": "{{base_url}}/api/user/editUser/{{userId}}",
+								"host": [
+									"{{base_url}}"
+								],
+								"path": [
+									"api",
+									"user",
+									"editUser",
+									"{{userId}}"
+								]
+							}
+						},
+						"response": []
+					},
+					{
+						"name": "ChangePassword",
+						"request": {
+							"method": "PUT",
+							"header": [
+								{
+									"key": "Accept",
+									"value": "application/json",
+									"type": "text"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirmation\": \"{{password}}\"\r\n}",
+								"options": {
+									"raw": {
+										"language": "json"
+									}
+								}
+							},
+							"url": {
+								"raw": "{{base_url}}/api/user/changePassword/{{userId}}",
+								"host": [
+									"{{base_url}}"
+								],
+								"path": [
+									"api",
+									"user",
+									"changePassword",
+									"{{userId}}"
+								]
+							}
+						},
+						"response": []
+					},
+					{
+						"name": "DeleteUser",
+						"request": {
+							"method": "DELETE",
+							"header": [
+								{
+									"key": "Accept",
+									"value": "application/json",
+									"type": "text"
+								}
+							],
+							"url": {
+								"raw": "{{base_url}}/api/user/deleteUser/{{userId}}",
+								"host": [
+									"{{base_url}}"
+								],
+								"path": [
+									"api",
+									"user",
+									"deleteUser",
+									"{{userId}}"
+								]
+							}
+						},
+						"response": []
+					}
+				],
 		},
 		{
 			"name": "Room",
@@ -284,6 +494,11 @@
 		},
 		{
 			"key": "password",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "userId",
 			"value": "",
 			"type": "default"
 		},

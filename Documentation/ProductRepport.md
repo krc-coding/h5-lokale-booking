@@ -1,8 +1,11 @@
 Kravspecs:
 
+Room Booking System, is a system designed to make it easy for students to find the correct class room, and to make it easy for teachers to book rooms.
 
-## User roles:
 
+## Functional requirements:
+
+### User roles:
 System admin:
 
 - Can create admin users 
@@ -51,8 +54,6 @@ Student (Guest):
 - Doesn't need login.
 - Can request room booking.
 
-## Functional requirements:
-
 ### User management:
 
 - Profile view:
@@ -82,7 +83,11 @@ Student (Guest):
 - Room management view:
     - Contains a list of all rooms.
     - Shuold have options for admin users to:
-        * Create rooms.
+        * Create rooms, must include the following:
+            - Name.
+            - Room id. This is used on the bookings.
+            - Description.
+            - Size.
         * Update rooms.
         * Delete rooms.
 
@@ -126,14 +131,39 @@ Student (Guest):
     - Contains all info that have been entered during creation.
     - If the teacher who created it, or an admin opens the details view, then there should be an edit icon to allow updating the booking.
 
+### Web page:
+
+- Should only contain views relevant for students/guests.
+
+### App:
+
+- Should contain views relevant for students/guests.
+- Should contain a login page for teachers and admins.
+- Should contain pages for teachers and admins to easily manage bookings and other parts of the room booking system.
+
+## Nice to have features:
+
+- Websocket communication, so that when a change is made, then all devices are notified about the change and can refresh
+
+## Domain model:
+
+```mermaid
+graph LR;
+A[Electron App]
+B[Web page]
+C[Backend]
+D[(Database)]
+
+A-->C
+B-->C
+C-->D
+```
+
+## Database model:
 
 
 
----
----
----
-
-Tids system.
+<!-- Tids system.
 
 mobil side.
 desktop side.
@@ -168,7 +198,7 @@ Alle bruger:
 - underviser (Kræver login)
 - admin (kræver login))
 
-Backend:
+(Backend:
 - auth using jwt
 - api for crud operations:
     - user
@@ -184,7 +214,7 @@ Frontend:
 
 - Room management
     - CRUD rooms
-    - CRUD groups
+    - CRUD groups)
 
 (- Opret booking side.)
 
@@ -193,6 +223,6 @@ Frontend:
     - Week page for single room + bookings
     - Custom time duration page for single room + bookings.)
 
-Andet:
+(Andet:
 - Electron desktop/mobile app
-- Websocket communication, so that when a change is made, then all devices are notified about the change and can refresh
+- Websocket communication, so that when a change is made, then all devices are notified about the change and can refresh) -->
