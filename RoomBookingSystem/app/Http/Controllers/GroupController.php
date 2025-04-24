@@ -49,7 +49,7 @@ class GroupController extends Controller
         return response()->json($group->load('rooms'), 201);
     }
 
-    public function updateGroup(Request $request, Group $group)
+    public function updateGroupName(Request $request, Group $group)
     {
         $user = auth()->user();
 
@@ -58,20 +58,48 @@ class GroupController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'room_ids' => 'sometimes|array',
-            'room_ids.*' => 'exists:rooms,id'
+            'name' => 'required|string|max:255',
         ]);
 
-        if (isset($validated['name'])) {
-            $group->update(['name' => $validated['name']]);
-        }
-
-        if (isset($validated['room_ids'])) {
-            $group->rooms()->sync($validated['room_ids']);
-        }
+        $group->update(['name' => $validated['name']]);
 
         return response()->json($group->load('rooms'), 200);
+    }
+
+    public function addRoomsToGroup(Request $request, Group $group)
+    {
+        $user = auth()->user();
+
+        if ($user->role !== 'admin') {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $validated = $request->validate([
+            'room_ids' => 'required|array',
+            'room_ids.*' => 'exists:rooms,id',
+        ]);
+
+        $group->rooms()->syncWithoutDetaching($validated['room_ids']);
+
+        return response()->json($group->load('rooms'), 200);
+    }
+
+    public function removeRoomsFromGroup(Request $request, Group $group)
+    {
+        $user = auth()->user();
+
+        if ($user->role !== 'admin') {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $validated = $request->validate([
+            'room_ids' => 'required|array',
+            'room_ids.*' => 'exists:rooms,id',
+        ]);
+
+        $group->rooms()->detach($validated['room_ids']);
+
+        return response()->json(['message' => 'Rooms removed from group'], 200);
     }
 
     public function deleteGroup(Group $group)
