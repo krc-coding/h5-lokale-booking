@@ -723,7 +723,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    // You can remove them all if you want to.\r\n    \"title\": \"booking\",\r\n    \"DESCRIPTION\": \"WHY DID I MAKE A BOOKING?\",\r\n    \"START_TIME\": \"2025-04-22T13:30:00\",\r\n    \"end_time\": \"2025-04-22T14:00:00\"\r\n}",
+							"raw": "{\r\n    // You can remove them all if you want to.\r\n    \"title\": \"booking\",\r\n    \"description\": \"WHY DID I MAKE A BOOKING?\",\r\n    \"start_time\": \"2025-04-22T13:30:00\",\r\n    \"end_time\": \"2025-04-22T14:00:00\",\r\n    \"room_id\": {{roomId}}\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

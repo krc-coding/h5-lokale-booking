@@ -21,6 +21,9 @@ class Booking extends Model
         'updated_at',
     ];
 
+    // To prevent it from chancing
+    protected $guarded = ['user_id'];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

@@ -7,7 +7,6 @@ use App\Models\Booking;
 use App\Models\Room;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Date;
 
 class BookingController extends Controller
 {
@@ -82,17 +81,32 @@ class BookingController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $validated = $request->validate([
-            'title' => 'string',
-            'description' => 'string',
-            'start_time' => 'date',
-            'end_time' => 'date',
-        ]);
+        // Updates the model using only they valid values, not the datebase
+        $booking->fill($request->validate([
+            'title' => 'sometimes|string',
+            'description' => 'sometimes|string',
+            'start_time' => 'sometimes|date',
+            'end_time' => 'sometimes|date|after_or_equal:start_time',
+            'room_id' => 'sometimes|exists:rooms,id',
+        ]));
 
-        $booking->title = $validated['title'] ?? $booking->title;
-        $booking->description = $validated['description'] ?? $booking->description;
-        $booking->start_time = $validated['start_time'] ?? $booking->start_time;
-        $booking->end_time = $validated['end_time'] ?? $booking->end_time;
+        // Checks for overlap
+        $overlap = Booking::where('room_id', $booking->room_id)
+            ->where('id', '!=', $booking->id)
+            ->where(function ($query) use ($booking) {
+                $query->whereBetween('start_time', [$booking->start_time, $booking->end_time])
+                    ->orWhereBetween('end_time', [$booking->start_time, $booking->end_time])
+                    ->orWhere(function ($query) use ($booking) {
+                        $query->where('start_time', '<=', $booking->start_time)
+                            ->where('end_time', '>=', $booking->end_time);
+                    });
+            })
+            ->exists();
+
+        if ($overlap) {
+            return response()->json(['message' => 'This time slot is already booked.'], 400);
+        }
+
         $booking->save();
 
         return new BookingResource($booking);
