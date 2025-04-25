@@ -45,6 +45,7 @@ class BookingController extends Controller
             $validated['end_time'] = Carbon::parse($validated['start_time'])->endOfDay();
         }
 
+        // It finds the room and checks if it's not overlapping
         $overlap = Booking::where('room_id', $validated['room_id'])
             ->where(function ($query) use ($validated) {
                 // Checks if the booking is with in one of the allready existing bookings 
