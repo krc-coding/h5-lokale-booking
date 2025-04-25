@@ -45,6 +45,23 @@ class BookingController extends Controller
             $validated['end_time'] = Carbon::parse($validated['start_time'])->endOfDay();
         }
 
+        $overlap = Booking::where('room_id', $validated['room_id'])
+            ->where(function ($query) use ($validated) {
+                // Checks if the booking is with in one of the allready existing bookings 
+                $query->whereBetween('start_time', [$validated['start_time'], $validated['end_time']])
+                    ->orWhereBetween('end_time', [$validated['start_time'], $validated['end_time']])
+                    ->orWhere(function ($query) use ($validated) {
+                        // Checks if the booking completely overlap another booking
+                        $query->where('start_time', '<=', $validated['start_time'])
+                            ->where('end_time', '>=', $validated['end_time']);
+                    });
+            })
+            ->exists();
+
+        if ($overlap) {
+            return response()->json(['message' => 'This time slot is already booked.'], 400);
+        }
+
         $booking = Booking::create([
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
