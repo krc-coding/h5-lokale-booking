@@ -28,8 +28,8 @@ class BookingController extends Controller
     public function createBooking(Request $request)
     {
         $user = auth()->user();
-        if ($user->role !== 'admin') {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        if ($user->role !== 'admin' && $user->role !== 'teacher') {
+            return response()->json(['message' => 'Forbidden'], 403);
         }
 
         $validated = $request->validate([
@@ -78,7 +78,7 @@ class BookingController extends Controller
     {
         $user = auth()->user();
         if ($user->role !== 'admin' && $user->id !== $booking->user_id) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Forbidden'], 403);
         }
 
         // Updates the model using only they valid values, not the datebase
@@ -116,7 +116,7 @@ class BookingController extends Controller
     {
         $user = auth()->user();
         if ($user->role !== 'admin' && $user->id !== $booking->user_id) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Forbidden'], 403);
         }
 
         $booking->delete();
