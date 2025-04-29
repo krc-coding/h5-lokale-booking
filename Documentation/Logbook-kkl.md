@@ -7,3 +7,7 @@
 ### 23-04-2025
 - Created migrations
 - Created CRUD room controller
+
+### 24-04-25
+- Fixed a git merge conflict
+- Created CRUD booking controller

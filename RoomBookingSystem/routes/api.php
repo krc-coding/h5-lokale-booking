@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GroupController;
@@ -31,10 +32,22 @@ Route::prefix('/room')->group(function () {
     });
 });
 
+Route::prefix('booking')->group(function () {
+    Route::get('', [BookingController::class, 'getAllBookings']);
+    Route::get('/{booking}', [BookingController::class, 'getSingleById']);
+    Route::get('/room/{room}', [BookingController::class, 'getByRoomId']);
+
+    Route::middleware('auth:api')->group(function () {
+        Route::post('/create', [BookingController::class, 'createBooking']);
+        Route::put('/update/{booking}', [BookingController::class, 'updateBooking']);
+        Route::delete('delete/{booking}', [BookingController::class, 'delete']);
+    });
+});
+
 Route::prefix('/group')->group(function () {
     Route::get('/getGroups', [GroupController::class, 'getGroups']);
     Route::get('/getGroupById/{group}', [GroupController::class, 'getGroupById']);
-    
+
     Route::middleware('auth:api')->group(function () {
         Route::post('/createGroup', [GroupController::class, 'createGroup']);
         Route::put('/updateGroupName/{group}', [GroupController::class, 'updateGroupName']);
