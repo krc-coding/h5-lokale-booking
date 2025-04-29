@@ -11,10 +11,10 @@
     <div class="container mt-4">
         <h1 class="mb-4">Bookings by Time Slot</h1>
 
-        <!-- View All Rooms Button -->
         <button class="btn btn-primary mb-3" onclick="showRoomsModal()">View All Rooms</button>
 
         <script>
+            // The rooms and bookings data passed from the server-side (Laravel)
             const rooms = @json($rooms->values());
             const bookingsByRoom = @json($rooms->mapWithKeys(fn($r) => [$r->id => $r->bookings]));
         </script>
@@ -22,7 +22,7 @@
         <div id="schedule-container"></div>
     </div>
 
-    <!-- Modal for All Rooms -->
+    <!-- Modal for displaying all rooms -->
     <div class="modal fade" id="roomsModal" tabindex="-1" aria-labelledby="roomsModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -30,15 +30,13 @@
                     <h5 class="modal-title" id="roomsModalLabel">Available Rooms</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="roomsList">
-                    <!-- Room links will be inserted here dynamically -->
-                </div>
+                <div class="modal-body" id="roomsList"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // Function to display rooms in a modal
+        // Function to show the modal with all available rooms
         function showRoomsModal() {
             const modal = new bootstrap.Modal(document.getElementById('roomsModal'));
             const list = document.getElementById('roomsList');
@@ -55,6 +53,7 @@
             modal.show();
         }
 
+        // On page load, generate the booking schedule
         window.addEventListener("DOMContentLoaded", () => {
             const container = document.getElementById("schedule-container");
             const interval = 30;
@@ -63,7 +62,6 @@
 
             const pad = num => String(num).padStart(2, '0');
             const formatTime = (h, m) => `${pad(h)}:${pad(m)}`;
-
             const parseTimeOnly = (str) => {
                 const [_, time] = str.split(' ');
                 const [h, m] = time.split(':').map(Number);
@@ -87,6 +85,7 @@
                 });
             });
 
+            // Loop through each time slot and display bookings
             for (let h = startHour; h < endHour; h++) {
                 for (let m = 0; m < 60; m += interval) {
                     const timeLabel = formatTime(h, m);
@@ -103,11 +102,12 @@
                     const bookingContainer = document.createElement('div');
                     bookingContainer.className = 'booking-container';
 
+                    // Filter bookings that fall within this time slot
                     allBookings.forEach(b => {
                         if (b.start >= slotStart && b.start < slotEnd) {
                             const block = document.createElement('div');
                             block.className = 'booking-block';
-                            block.innerHTML = `
+                            block.innerHTML = ` 
                                 <div><strong>${b.title || 'Booking'}</strong></div>
                                 <div>${b.startLabel.slice(11, 16)} - ${b.endLabel.slice(11, 16)}</div>
                                 <span class="room-name">Room: ${b.room}</span>
