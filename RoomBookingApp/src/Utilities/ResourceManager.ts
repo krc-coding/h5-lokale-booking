@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, Method } from "axios";
 
-export class ResourceManager {
+class ResourceManager {
     private headers: object = { "Accept": "application/json" };
     private baseUrl: string;
 
@@ -40,3 +40,6 @@ class RequestHandler {
         return axios(this.requestConfig);
     }
 }
+
+const resourceManager = new ResourceManager();
+export default resourceManager;
