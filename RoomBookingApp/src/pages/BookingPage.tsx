@@ -3,7 +3,24 @@ import resourceManager from "../Utilities/ResourceManager";
 import { IRoom } from "../types/IRoom";
 import { IBooking } from "../types/IBooking";
 import { Box, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import { BottomBox, EmptyBox, MiddleBox, TopBox } from "../Components/BookingBoxes";
 
+const timePeriods = () => {
+    const timePeriods = [];
+    for (let timePeriod = 700; timePeriod < 1700; timePeriod += 30) {
+        if (timePeriod.toString().includes("60")) timePeriod += 40;
+        let hour = (timePeriod / 100).toFixed(0);
+        if (hour.length == 1) {
+            hour = `0${hour}`;
+        }
+        let minutes = (timePeriod % 100).toFixed(0);
+        if (minutes.length == 1) {
+            minutes = `${minutes}0`;
+        }
+        timePeriods.push({ hour: hour, minutes: minutes });
+    }
+    return timePeriods;
+};
 
 const BookingPage = () => {
     const [rooms, setRooms] = useState<IRoom[]>([]);
@@ -29,6 +46,23 @@ const BookingPage = () => {
                     }
                     bookings.push(newBooking);
                 });
+                bookings.sort((a, b) => a.start_time.getTime() - b.start_time.getTime());
+                let bookingIndex = 0;
+                bookings.forEach((booking) => {
+                    const overlapsBookings = bookings.some((tempBooking) => {
+                        if (tempBooking.id == booking.id) return false;
+                        if (tempBooking.start_time > booking.end_time) return false;
+                        if (tempBooking.end_time < booking.start_time) return false;
+                        return true;
+                    });
+                    if (overlapsBookings) {
+                        booking.index = bookingIndex;
+                        bookingIndex++;
+                    } else {
+                        booking.index = 0;
+                        bookingIndex = 0
+                    }
+                });
             }
             setBookings(bookings);
         });
@@ -39,23 +73,6 @@ const BookingPage = () => {
         getBookings();
     }, []);
 
-    const timePeriods = () => {
-        const timePeriods = [];
-        for (let timePeriod = 700; timePeriod < 1700; timePeriod += 30) {
-            if (timePeriod.toString().includes("60")) timePeriod += 40;
-            let hour = (timePeriod / 100).toFixed(0);
-            if (hour.length == 1) {
-                hour = `0${hour}`;
-            }
-            let minutes = (timePeriod % 100).toFixed(0);
-            if (minutes.length == 1) {
-                minutes = `${minutes}0`;
-            }
-            timePeriods.push({ hour: hour, minutes: minutes });
-        }
-        return timePeriods;
-    };
-
     const getBookingsForTimePeriod = (timePeriod: { hour: string, minutes: string }) => {
         if (bookings.length < 1) {
             return null;
@@ -64,123 +81,77 @@ const BookingPage = () => {
         const periodDateTime = new Date();
         periodDateTime.setHours(parseInt(timePeriod.hour));
         periodDateTime.setMinutes(parseInt(timePeriod.minutes));
+        periodDateTime.setSeconds(0);
+        periodDateTime.setMilliseconds(0);
 
         const filteredBookings = bookings.filter((booking) => {
+            const startMinutesRatio = booking.start_time.getMinutes() / 60;
+            const endMinutesRatio = booking.end_time.getMinutes() / 60;
+            const start_time = new Date(booking.start_time);
+            const end_time = new Date(booking.end_time);
+
+            // Normalizes the start and end times minutes, to match the 30 minutes interval of the time periods.
+            start_time.setMinutes(startMinutesRatio < 0.5 ? 0 : 30);
+            end_time.setMinutes(endMinutesRatio < 0.5 ? 0 : 30);
+
             return (
-                booking.start_time <= periodDateTime &&
-                booking.end_time >= periodDateTime
+                start_time <= periodDateTime &&
+                end_time > periodDateTime
             );
         });
 
         return (
             <Box sx={{ display: "flex", height: "100%" }}>
-                {filteredBookings.map((booking) => {
+                {filteredBookings.map((booking, arrayIndex) => {
+                    // Checks the booking timestamps, and determines which type of box component should be rendered for the current time period.
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    let BoxComponent: any = MiddleBox;
+
                     if (booking.start_time.getHours() == parseInt(timePeriod.hour)) {
-                        const temp = booking.start_time.getMinutes() / 60;
-
-                        let startHour = booking.start_time.getHours().toFixed(0);
-                        if (startHour.length == 1) {
-                            startHour = `0${startHour}`;
-                        }
-                        let startMinutes = booking.start_time.getMinutes().toFixed(0);
-                        if (startMinutes.length == 1) {
-                            startMinutes = `${startMinutes}0`;
-                        }
-                        let endHour = booking.end_time.getHours().toFixed(0);
-                        if (endHour.length == 1) {
-                            endHour = `0${endHour}`;
-                        }
-                        let endMinutes = booking.end_time.getMinutes().toFixed(0);
-                        if (endMinutes.length == 1) {
-                            endMinutes = `${endMinutes}0`;
-                        }
-
-                        if ((temp < 0.5 && parseInt(timePeriod.minutes) == 0) || (temp >= 0.5 && parseInt(timePeriod.minutes) == 30)) {
-                            return (
-                                <Box
-                                    sx={{
-                                        marginTop: "2px",
-                                        marginX: "2px",
-                                        height: "100%",
-                                        width: "200px",
-                                        border: "1px solid #0c5460",
-                                        borderBottom: "unset",
-                                        borderTopRightRadius: "16px",
-                                        borderTopLeftRadius: "16px",
-                                        backgroundColor: "#d1ecf1",
-                                        display: "flex",
-                                        justifyContent: "space-evenly",
-                                    }}
-                                >
-                                    <Box
-                                        component={"span"}
-                                        sx={{
-                                        }}
-                                    >
-                                        {booking.title}
-                                    </Box>
-                                    <Box
-                                        component={"span"}
-                                        sx={{
-                                            alignSelf: "start",
-                                            justifySelf: "end",
-                                        }}
-                                    >
-                                        [{rooms.find((room) => room.id == booking.room_id)?.room_number}]
-                                    </Box>
-                                    <br />
-                                    <Box
-                                        component={"span"}
-                                        sx={{
-                                        }}
-                                    >
-                                        {startHour}:{startMinutes} - {endHour}:{endMinutes}
-                                    </Box>
-                                </Box>
-                            )
+                        const startMinutesRatio = booking.start_time.getMinutes() / 60;
+                        if ((startMinutesRatio < 0.5 && parseInt(timePeriod.minutes) == 0) || (startMinutesRatio >= 0.5 && parseInt(timePeriod.minutes) == 30)) {
+                            BoxComponent = TopBox;
                         }
                     }
 
-                    const end_time = booking.end_time;
+                    const end_time = new Date(booking.end_time);
                     if (end_time.getMinutes() == 0) {
                         end_time.setHours(end_time.getHours() - 1);
                         end_time.setMinutes(59);
+                    } else {
+                        end_time.setMinutes(end_time.getMinutes() - 1);
+
                     }
 
                     if (end_time.getHours() == parseInt(timePeriod.hour)) {
-                        const temp = end_time.getMinutes() / 60;
+                        const endMinutesRatio = end_time.getMinutes() / 60;
 
-                        if ((temp < 0.5 && parseInt(timePeriod.minutes) == 0) || (temp >= 0.5 && parseInt(timePeriod.minutes) == 30)) {
-                            return (
-                                <Box
-                                    sx={{
-                                        height: "100%",
-                                        width: "200px",
-                                        border: "1px solid #0c5460",
-                                        borderTop: "unset",
-                                        borderBottomRightRadius: "16px",
-                                        borderBottomLeftRadius: "16px",
-                                        backgroundColor: "#d1ecf1",
-                                        marginX: "2px",
-                                    }}
-                                />
-                            )
+                        if ((endMinutesRatio < 0.5 && parseInt(timePeriod.minutes) == 0) || (endMinutesRatio >= 0.5 && parseInt(timePeriod.minutes) == 30)) {
+                            BoxComponent = BottomBox;
+                        }
+                    }
+
+                    // Determines how many empty boxes is required before the actual box.
+                    let EmptyBoxCount = 0;
+                    if (filteredBookings.length == 1) {
+                        EmptyBoxCount = booking.index ?? 0;
+                    } else if (filteredBookings.length > 1) {
+                        const currentBookingIndex = booking.index ?? 1;
+                        if (arrayIndex == 0) EmptyBoxCount = currentBookingIndex;
+                        if (arrayIndex > 0) {
+                            const previousBookingIndex = filteredBookings[arrayIndex - 1].index ?? 1;
+                            EmptyBoxCount = (currentBookingIndex - previousBookingIndex) - 1;
                         }
                     }
 
                     return (
-                        <Box
-                            sx={{
-                                height: "100%",
-                                width: "200px",
-                                border: "1px solid #0c5460",
-                                borderTop: "unset",
-                                borderBottom: "unset",
-                                backgroundColor: "#d1ecf1",
-                                marginX: "2px",
-                            }}
-                        />
-                    )
+                        <React.Fragment
+                            key={booking.id}
+                        >
+                            {Array.from({ length: EmptyBoxCount }).map((_, i) => <EmptyBox key={i} />)}
+                            <BoxComponent booking={booking} rooms={rooms} />
+                        </React.Fragment>
+                    );
                 }
                 )}
             </Box>
@@ -201,6 +172,7 @@ const BookingPage = () => {
                     <TableBody>
                         {timePeriods().map((timePeriod) => (
                             <TableRow
+                                key={`${timePeriod.hour}:${timePeriod.minutes}`}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
