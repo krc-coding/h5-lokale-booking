@@ -4,13 +4,62 @@ const userRole = "";
 const userId = -1;
 
 const users = [];
+let teacher;
+
+function choosePageContextAndFillIt() {
+    const teacherPage = document.getElementById('teacher');
+    const adminPage = document.getElementById('admin');
+    const adminAddBtn = document.getElementById('adminAddBtn');
+    const modals = document.getElementById('modals');
+    const title = document.getElementById('title');
+
+    if (userRole === 'teacher') {
+        title.innerText = 'Welcome';
+        teacherPage.style.display = 'block';
+        adminPage.innerHTML = '';
+        adminAddBtn.innerHTML = '';
+        modals.innerHTML = '';
+        fetchTeacher();
+    }
+    else if (userRole === 'admin' || userRole === 'systemAdmin') {
+        title.innerText = 'Users';
+        teacherPage.innerHTML = '';
+        adminPage.style.display = 'block';
+        adminAddBtn.style.display = 'block';
+        fetchUsers();
+    }
+    else {
+        teacherPage.innerHTML = '';
+        adminPage.innerHTML = '';
+        adminAddBtn.innerHTML = '';
+        modals.innerHTML = '';
+    }
+}
 
 ///////////////////// Get users /////////////////////
+
+function fetchTeacher() {
+    fetch('http://localhost:8000/api/user/getUser/' + userId, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            teacher = data.user;
+            renderTeacher();
+        })
+        .catch(error => console.error('Error:', error));
+}
+
 function fetchUsers() {
     fetch('http://localhost:8000/api/user/getAllUsers', {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json'
         }
     })
         .then(response => response.json())
@@ -29,6 +78,10 @@ function fetchUsers() {
 }
 
 ///////////////////// Render users /////////////////////
+function renderTeacher() {
+    document.getElementById('title').innerText = 'Welcome ' + teacher.username;
+}
+
 function renderUsers() {
     const grid = document.getElementById('userGrid');
     const template = document.getElementById('user-card-template');
@@ -116,6 +169,7 @@ function submitAddUser() {
                 return;
             }
 
+            alert('Successfully created: ' + data.user.username);
             users.push({
                 id: data.user.id,
                 username: data.user.username,
@@ -151,7 +205,7 @@ function submitUserEdit() {
 
     if (window.userEdit) {
         let userEdit = window.userEdit;
-        if (userEdit.role === 'systemAdmin' && userEdit.role !== role)  {
+        if (userEdit.role === 'systemAdmin' && userEdit.role !== role) {
             closeUserEdit();
             alert(`You can not update ${userEdit.username}, only disable this user.`);
             return;
@@ -167,7 +221,8 @@ function submitUserEdit() {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
                 role: role,
@@ -182,6 +237,7 @@ function submitUserEdit() {
                     return;
                 }
 
+                alert('Successfully editing: ' + data.user.username);
                 const index = users.findIndex(user => user.id === data.user.id);
                 if (index !== -1) {
                     users[index].role = data.user.role;
@@ -203,16 +259,36 @@ function openChangePassword(user) {
 }
 
 function closeChangePassword() {
-    document.getElementById('password-change').style.display = 'none';
-    document.getElementById('password-not-matching-change-password').style.display = 'none';
-    document.getElementById('password').value = '';
-    document.getElementById('password-confirmed').value = '';
-    window.userPasswordChange = null;
+    if (userRole === 'admin') {
+        document.getElementById('password-change').style.display = 'none';
+        document.getElementById('password-not-matching-change-password-admin').style.display = 'none';
+        document.getElementById('password-admin').value = '';
+        document.getElementById('password-confirmed-admin').value = '';
+        window.userPasswordChange = null;
+    }
+    if (userRole === 'teacher') {
+        document.getElementById('password-not-matching-change-password-teacher').style.display = 'none';
+        document.getElementById('password-teacher').value = '';
+        document.getElementById('password-confirmed-teacher').value = '';
+
+    }
 }
 
 function submitChangePassword() {
-    const newPassword = document.getElementById('password').value ?? '';
-    const newPasswordConfirmed = document.getElementById('password-confirmed').value ?? '';
+    let newPassword = '';
+    let newPasswordConfirmed = '';
+    let userIdForPasswordChange = -1;
+
+    if (userRole === 'admin') {
+        newPassword = document.getElementById('password-admin').value ?? '';
+        newPasswordConfirmed = document.getElementById('password-confirmed-admin').value ?? '';
+        userIdForPasswordChange = window.userPasswordChange.id;
+    }
+    else if (userRole === 'teacher') {
+        newPassword = document.getElementById('password-teacher').value ?? '';
+        newPasswordConfirmed = document.getElementById('password-confirmed-teacher').value ?? '';
+        userIdForPasswordChange = userId;
+    }
 
     if (newPassword == '' || newPasswordConfirmed == '') {
         alert('One or both of the fields are empty.');
@@ -224,19 +300,19 @@ function submitChangePassword() {
         return;
     }
 
-    if (window.userPasswordChange) {
-        let userPasswordChange = window.userPasswordChange;
-        if (userRole !== 'admin' && userPasswordChange.id !== userId) {
+    if (userIdForPasswordChange > -1) {
+        if (userRole !== 'admin' && userIdForPasswordChange !== userId) {
             closeChangePassword();
             alert('You are not allowed to update this user.');
             return;
         }
 
-        fetch('http://localhost:8000/api/user/changePassword/' + userPasswordChange.id, {
+        fetch('http://localhost:8000/api/user/changePassword/' + userIdForPasswordChange, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
                 password: newPassword,
@@ -249,6 +325,7 @@ function submitChangePassword() {
                     console.error(errorData.message || `Request failed with status ${response.status}`);
                     return;
                 }
+                alert('Successfully');
             })
             .catch(error => console.error('Password change failed:', error.message));
     }
@@ -280,6 +357,7 @@ function deleteUser(user) {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json'
         }
     })
         .then(async response => {
@@ -289,6 +367,7 @@ function deleteUser(user) {
                 return;
             }
 
+            alert('Successfully deleting user');
             const index = users.findIndex(u => u.id === user.id);
             if (index !== -1) {
                 users.splice(index, 1);
@@ -299,4 +378,4 @@ function deleteUser(user) {
 }
 
 // Start fetching users:
-fetchUsers();
+choosePageContextAndFillIt();
