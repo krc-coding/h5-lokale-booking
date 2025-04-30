@@ -8,6 +8,12 @@
 - Created migrations
 - Created CRUD room controller
 
-### 24-04-25
+### 24-04-25 -> 28-04-25
 - Fixed a git merge conflict
 - Created CRUD booking controller
+
+### 29-04-25
+- Start making user management on the app
+
+### 30-04-25
+- Continuing making user management in webside
