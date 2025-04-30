@@ -6,6 +6,7 @@ use App\Http\Resources\RoomResource;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class RoomController extends Controller
 {
@@ -17,6 +18,19 @@ class RoomController extends Controller
     public function getAllRooms()
     {
         return Room::all()->mapInto(RoomResource::class);
+    }
+   
+    public function getRoomsAndTodayBookings()
+    {
+        $today = Carbon::today();
+        $tomorrow = Carbon::tomorrow();
+    
+        $rooms = Room::with(['bookings' => function ($query) use ($today, $tomorrow) {
+            $query->whereBetween('start_time', [$today, $tomorrow])
+                  ->orderBy('start_time', 'asc');
+        }])->get();
+    
+        return view('home', compact('rooms'));
     }
 
     public function createRoom(Request $request)
