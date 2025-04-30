@@ -33,7 +33,7 @@ function renderUsers() {
     const grid = document.getElementById('userGrid');
     const template = document.getElementById('user-card-template');
     grid.innerHTML = ''; // Clear grid
-    grid.appendChild(template);
+    grid.appendChild(template); // Save the template again
 
     users.forEach(user => {
         const clone = template.content.cloneNode(true);
@@ -151,7 +151,7 @@ function submitUserEdit() {
 
     if (window.userEdit) {
         let userEdit = window.userEdit;
-        if (userEdit.role === 'systemAdmin') {
+        if (userEdit.role === 'systemAdmin' && userEdit.role !== role)  {
             closeUserEdit();
             alert(`You can not update ${userEdit.username}, only disable this user.`);
             return;
