@@ -6,4 +6,5 @@ export interface IBooking {
     end_time: Date;
     user_id: number;
     room_id: number;
+    index?: number;
 }
