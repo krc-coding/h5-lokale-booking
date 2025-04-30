@@ -24,12 +24,11 @@ class UserController extends Controller
 
     public function getUser(user $user)
     {
-        $user = auth()->user(); 
+        $authUser = auth()->user();
 
-        if ($user->role !== 'admin' && $authUser->id != $user->id) {
+        if ($authUser->role !== 'admin' && $authUser->id != $user->id) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-
 
         return response(['user' => $user]);
     }
@@ -71,7 +70,7 @@ class UserController extends Controller
         ]);
 
         $user->disabled = $validated['disabled'] ?? $user->disabled;
-        if ($user->role !== 'systemAdmin'){
+        if ($user->role !== 'systemAdmin') {
             $user->role = $validated['role'] ?? $user->role;
         }
 
@@ -105,7 +104,7 @@ class UserController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        if ($user->role == 'systemAdmin'){
+        if ($user->role == 'systemAdmin') {
             return response()->json(['message' => 'System admin cannot be deleted but only dissabled'], 401);
         }
 
