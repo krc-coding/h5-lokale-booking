@@ -8,4 +8,3 @@ Route::get('/userManagement', function () {
     return view('UserManagement');
 });
 Route::get('/rooms/{id}', [RoomController::class, 'showRoom']);
-

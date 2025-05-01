@@ -20,6 +20,18 @@
         <h1 class="mb-1">{{ $room->name }}</h1>
         <p class="text-muted">{{ $room->description ?? 'No description available.' }}</p>
 
+        <div class="mb-3 d-flex align-items-end gap-2">
+            <div>
+                <label for="startDate" class="form-label">From:</label>
+                <input type="date" id="startDate" class="form-control">
+            </div>
+            <div>
+                <label for="endDate" class="form-label">To:</label>
+                <input type="date" id="endDate" class="form-control">
+            </div>
+            <button class="btn btn-outline-primary mb-1" onclick="renderSchedule()">Apply</button>
+        </div>
+
         <button class="btn btn-success mb-3" onclick="showBookingModal()">Book This Room</button>
 
         <div id="schedule-container"></div>
@@ -31,7 +43,6 @@
     <!-- Login Modal -->
     <x-login-modal />
 
-
     <script>
         function handleAuthAction() {
             const token = localStorage.getItem('authToken');
@@ -41,11 +52,6 @@
                 const modal = new bootstrap.Modal(document.getElementById('loginModal'));
                 modal.show();
             }
-        }
-
-        function showLoginModal() {
-            const modal = new bootstrap.Modal(document.getElementById('loginModal'));
-            modal.show();
         }
 
         function showBookingModal() {
@@ -72,53 +78,83 @@
                         end_time: document.getElementById('end_time').value,
                     })
                 })
-                .then(r => r.json())
-                .then(data => {
+                .then(async r => {
+                    const data = await r.json();
+                    if (!r.ok) {
+                        alert(data.message || 'Booking failed.');
+                        return;
+                    }
                     alert('Booking successful!');
                     location.reload();
                 })
                 .catch(err => {
                     console.error(err);
-                    alert('Booking failed.');
+                    alert('Something went wrong. Booking failed.');
                 });
+
         });
 
-        // Build schedule
-        window.addEventListener("DOMContentLoaded", () => {
-            const bookings = @json($room->bookings);
-            const container = document.getElementById("schedule-container");
+        function toLocalDate(dateString) {
+            const date = new Date(dateString);
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes());
+        }
 
-            const pad = n => n.toString().padStart(2, '0');
-            const formatTime = (date) => `${pad(date.getHours())}:${pad(date.getMinutes())}`;
-            const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        function formatDateInput(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function renderSchedule() {
+            const container = document.getElementById("schedule-container");
+            container.innerHTML = "";
+
+            const bookings = @json($room->bookings);
+
+            const startInput = document.getElementById("startDate").value;
+            const endInput = document.getElementById("endDate").value;
+            const startDate = new Date(startInput);
+            const endDate = new Date(endInput);
+            const dayCount = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
 
             const grouped = {};
             bookings.forEach(b => {
-                const d = new Date(b.start_time);
-                const day = weekDays[d.getDay()];
-                if (!grouped[day]) grouped[day] = [];
-                grouped[day].push(b);
+                const localDate = toLocalDate(b.start_time);
+                const key = formatDateInput(localDate);
+                if (!grouped[key]) grouped[key] = [];
+                grouped[key].push({
+                    ...b,
+                    localDate
+                });
             });
 
-            weekDays.forEach(day => {
-                const dayBookings = grouped[day] || [];
+            for (let i = 0; i < dayCount; i++) {
+                const current = new Date(startDate);
+                current.setDate(current.getDate() + i);
+                const key = formatDateInput(current);
+                const weekday = current.toLocaleDateString(undefined, {
+                    weekday: 'long'
+                });
+
                 const dayHeader = document.createElement('h4');
                 dayHeader.className = 'mt-4';
-                dayHeader.textContent = day;
+                dayHeader.textContent = `${weekday} (${key})`;
                 container.appendChild(dayHeader);
 
                 const list = document.createElement('ul');
                 list.className = 'list-group mb-3';
 
-                dayBookings.forEach(b => {
-                    const li = document.createElement('li');
-                    li.className = 'list-group-item';
-                    li.innerHTML =
-                        `<strong>${b.title}</strong><br>${b.start_time.slice(11,16)} - ${b.end_time.slice(11,16)}`;
-                    list.appendChild(li);
-                });
+                const dayBookings = grouped[key] || [];
 
-                if (!dayBookings.length) {
+                if (dayBookings.length) {
+                    dayBookings.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+                    dayBookings.forEach(b => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        const start = b.start_time.slice(11, 16);
+                        const end = b.end_time ? b.end_time.slice(11, 16) : '';
+                        li.innerHTML = `<strong>${b.title}</strong><br>${start} - ${end}`;
+                        list.appendChild(li);
+                    });
+                } else {
                     const li = document.createElement('li');
                     li.className = 'list-group-item text-muted';
                     li.textContent = 'No bookings';
@@ -126,10 +162,20 @@
                 }
 
                 container.appendChild(list);
-            });
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const today = new Date();
+            const nextWeek = new Date();
+            nextWeek.setDate(today.getDate() + 7);
+
+            document.getElementById("startDate").value = formatDateInput(today);
+            document.getElementById("endDate").value = formatDateInput(nextWeek);
+
+            renderSchedule();
         });
 
-        // Update login/profile button
         window.onload = () => {
             const token = localStorage.getItem('authToken');
             const btn = document.getElementById('authButton');
