@@ -1,10 +1,31 @@
-// These need to be removed when it can be fected from somewhere else.
-const token = "";
-const userRole = "";
-const userId = -1;
-
+let userRole = '';
 const users = [];
 let teacher;
+
+function getUserId(exitingToken = null) {
+    const token = exitingToken ?? getToken();
+    return JSON.parse(atob(token.split('.')[1])).sub;
+}
+
+function getToken() {
+    return localStorage.getItem('authToken');
+}
+
+function fetchUserole() {
+    fetch('/api/user/getRole', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${getToken()}`,
+            'Accept': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(role => {
+            userRole = role.role;
+            choosePageContextAndFillIt();
+        })
+        .catch(error => console.error('Error:', error));
+}
 
 function choosePageContextAndFillIt() {
     const teacherPage = document.getElementById('teacher');
@@ -39,7 +60,8 @@ function choosePageContextAndFillIt() {
 ///////////////////// Get users /////////////////////
 
 function fetchTeacher() {
-    fetch('http://localhost:8000/api/user/getUser/' + userId, {
+    const token = getToken();
+    fetch('/api/user/getUser/' + getUserId(token), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -55,10 +77,10 @@ function fetchTeacher() {
 }
 
 function fetchUsers() {
-    fetch('http://localhost:8000/api/user/getAllUsers', {
+    fetch('/api/user/getAllUsers', {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${getToken()}`,
             'Accept': 'application/json'
         }
     })
@@ -147,10 +169,10 @@ function submitAddUser() {
         return;
     }
 
-    fetch('http://localhost:8000/api/user/createUser', {
+    fetch('/api/user/createUser', {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${getToken()}`,
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
@@ -202,6 +224,7 @@ function closeUserEdit() {
 function submitUserEdit() {
     const role = document.getElementById('role-input-edit-user').value;
     const disabled = document.getElementById('disabled-input').checked;
+    const token = getToken();
 
     if (window.userEdit) {
         let userEdit = window.userEdit;
@@ -211,13 +234,13 @@ function submitUserEdit() {
             return;
         }
 
-        if (userRole !== 'admin' && userEdit.id !== userId) {
+        if (userRole !== 'admin' && userEdit.id !== getUserId(token)) {
             closeUserEdit();
             alert('You are not allowed to update this user.');
             return;
         }
 
-        fetch('http://localhost:8000/api/user/editUser/' + userEdit.id, {
+        fetch('/api/user/editUser/' + userEdit.id, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -278,6 +301,8 @@ function submitChangePassword() {
     let newPassword = '';
     let newPasswordConfirmed = '';
     let userIdForPasswordChange = -1;
+    const token = getToken();
+    const userId = getUserId(token);
 
     if (userRole === 'admin') {
         newPassword = document.getElementById('password-admin').value ?? '';
@@ -307,7 +332,7 @@ function submitChangePassword() {
             return;
         }
 
-        fetch('http://localhost:8000/api/user/changePassword/' + userIdForPasswordChange, {
+        fetch('/api/user/changePassword/' + userIdForPasswordChange, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -335,6 +360,8 @@ function submitChangePassword() {
 
 ///////////////////// User deletion /////////////////////
 function deleteUser(user) {
+    const token = getToken();
+
     if (userRole !== 'admin') {
         alert('You are not allowed to delete users.');
         return;
@@ -343,7 +370,7 @@ function deleteUser(user) {
         alert(`You can not delete ${user.username}, only disable this user.`);
         return;
     }
-    if (user.id === userId) {
+    if (user.id === getUserId(token)) {
         alert('You are not allow to delete yourself.');
         return;
     }
@@ -353,7 +380,7 @@ function deleteUser(user) {
         return;
     }
 
-    fetch('http://localhost:8000/api/user/deleteUser/' + user.id, {
+    fetch('/api/user/deleteUser/' + user.id, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -378,4 +405,4 @@ function deleteUser(user) {
 }
 
 // Start fetching users:
-choosePageContextAndFillIt();
+fetchUserole();

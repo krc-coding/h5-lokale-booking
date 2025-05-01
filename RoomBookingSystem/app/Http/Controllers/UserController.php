@@ -33,6 +33,12 @@ class UserController extends Controller
         return response(['user' => $user]);
     }
 
+    public function getUserRole()
+    {
+        $authUser = auth()->user();
+        return response()->json(['role' => $authUser->role]);
+    }
+
     public function createUser(Request $request)
     {
         $authUser = auth()->user();
