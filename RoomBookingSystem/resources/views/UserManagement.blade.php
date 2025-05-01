@@ -10,15 +10,22 @@
 <body>
     <div class="header-bar">
         <h1 id="title"></h1>
-        <div id="adminAddBtn" style="display: none;">
-            <button class="btn" onclick="openAddUser()">Add User</button>
+        <div>
+            <button class="btn" onclick="changePage('/')">Back</button>
+            <div id="adminAddBtn" style="display: none;">
+                <button class="btn" onclick="openChangePassword()">Change password</button>
+                <button class="btn" onclick="openAddUser()">Add User</button>
+            </div>
         </div>
     </div>
 
     <div id="teacher" style="display: none;">
         <p>Change password:</p>
+        <p id="Incorrect-password-teacher" style="display: none; color: red;">Incorrect password</p>
+        <input id="old-password-teacher" type="password" placeholder="Old password" /><br /><br />
+
         <p id="password-not-matching-change-password-teacher" style="display: none; color: red;">Password doesn't match</p>
-        <input id="password-teacher" type="password" placeholder="Password" /><br /><br />
+        <input id="password-teacher" type="password" placeholder="New password" /><br /><br />
         <input id="password-confirmed-teacher" type="password" placeholder="Repeat password" /><br /><br />
 
         <button onclick="submitChangePassword()">Save</button>
@@ -39,7 +46,6 @@
 
                     <div class="editUserBtns" style="display: none;">
                         <button class="edit-btn btn">Edit Role/Disable</button>
-                        <button class="password-btn btn">Change Password</button>
                         <button class="delete-btn btn delete">Delete</button>
                     </div>
                 </div>
@@ -68,7 +74,14 @@
         <div id="user-edit" class="custom-alert" style="display: none;">
             <div class="custom-alert-box">
                 <p>Enter user details:</p>
-                <input id="role-input-edit-user" type="text" placeholder="Role" /><br /><br />
+                <label>Role:</label>
+                <select id="role-input-edit-user">
+                    <option value="admin">Admin</option>
+                    <option value="teacher">Teacher</option>
+                </select>
+                <br /><br />
+
+                <label>Disable:</label>
                 <input id="disabled-input" type="checkbox" /><br /><br />
 
                 <button onclick="submitUserEdit()">Save</button>
@@ -80,8 +93,11 @@
         <div id="password-change" class="custom-alert" style="display: none;">
             <div class="custom-alert-box">
                 <p>Change password:</p>
+                <p id="Incorrect-password-admin" style="display: none; color: red;">Incorrect password</p>
+                <input id="old-password-admin" type="password" placeholder="Old password" /><br /><br />
+
                 <p id="password-not-matching-change-password-admin" style="display: none; color: red;">Password doesn't match</p>
-                <input id="password-admin" type="password" placeholder="Password" /><br /><br />
+                <input id="password-admin" type="password" placeholder="New password" /><br /><br />
                 <input id="password-confirmed-admin" type="password" placeholder="Repeat password" /><br /><br />
 
                 <button onclick="submitChangePassword()">Save</button>

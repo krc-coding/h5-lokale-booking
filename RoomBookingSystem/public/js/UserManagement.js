@@ -2,6 +2,13 @@ let userRole = '';
 const users = [];
 let teacher;
 
+function changePage(page) {
+    console.log(page);
+    window.location.href = page;
+}
+
+// Help functions
+
 function getUserId(exitingToken = null) {
     const token = exitingToken ?? getToken();
     return JSON.parse(atob(token.split('.')[1])).sub;
@@ -125,7 +132,6 @@ function renderUsers() {
             clone.querySelector('.editUserBtns').style.display = 'block';
 
             clone.querySelector('.edit-btn').onclick = () => openUserEdit(user);
-            clone.querySelector('.password-btn').onclick = () => openChangePassword(user);
             clone.querySelector('.delete-btn').onclick = () => deleteUser(user);
         }
 
@@ -277,86 +283,66 @@ function submitUserEdit() {
 
 ///////////////////// User password edit /////////////////////
 
-function openChangePassword(user) {
+function openChangePassword() {
     document.getElementById('password-change').style.display = 'flex';
-    window.userPasswordChange = user;
 }
 
 function closeChangePassword() {
+    const theUserRole = userRole === 'admin' ? 'admin' : 'teacher';
+    document.getElementById('Incorrect-password-' + theUserRole).style.display = 'none';
+    document.getElementById('password-not-matching-change-password-' + theUserRole).style.display = 'none';
+    document.getElementById('old-password-' + theUserRole).value = '';
+    document.getElementById('password-' + theUserRole).value = '';
+    document.getElementById('password-confirmed-' + theUserRole).value = '';
+
     if (userRole === 'admin') {
         document.getElementById('password-change').style.display = 'none';
-        document.getElementById('password-not-matching-change-password-admin').style.display = 'none';
-        document.getElementById('password-admin').value = '';
-        document.getElementById('password-confirmed-admin').value = '';
-        window.userPasswordChange = null;
-    }
-    if (userRole === 'teacher') {
-        document.getElementById('password-not-matching-change-password-teacher').style.display = 'none';
-        document.getElementById('password-teacher').value = '';
-        document.getElementById('password-confirmed-teacher').value = '';
-
     }
 }
 
 function submitChangePassword() {
-    let newPassword = '';
-    let newPasswordConfirmed = '';
-    let userIdForPasswordChange = -1;
     const token = getToken();
     const userId = getUserId(token);
+    const theUserRole = userRole === 'admin' ? 'admin' : 'teacher';
 
-    if (userRole === 'admin') {
-        newPassword = document.getElementById('password-admin').value ?? '';
-        newPasswordConfirmed = document.getElementById('password-confirmed-admin').value ?? '';
-        userIdForPasswordChange = window.userPasswordChange.id;
-    }
-    else if (userRole === 'teacher') {
-        newPassword = document.getElementById('password-teacher').value ?? '';
-        newPasswordConfirmed = document.getElementById('password-confirmed-teacher').value ?? '';
-        userIdForPasswordChange = userId;
-    }
+    let oldPassword = document.getElementById('old-password-' + theUserRole).value ?? '';
+    let newPassword = document.getElementById('password-' + theUserRole).value ?? '';
+    let newPasswordConfirmed = document.getElementById('password-confirmed-' + theUserRole).value ?? '';
 
-    if (newPassword == '' || newPasswordConfirmed == '') {
-        alert('One or both of the fields are empty.');
+    if (oldPassword == '' || newPassword == '' || newPasswordConfirmed == '') {
+        alert('One or More of the fields are empty.');
         return;
     }
 
     if (newPassword !== newPasswordConfirmed) {
-        document.getElementById('password-not-matching-change-password').style.display = 'block';
+        document.getElementById('password-not-matching-change-password-' + theUserRole).style.display = 'block';
         return;
     }
 
-    if (userIdForPasswordChange > -1) {
-        if (userRole !== 'admin' && userIdForPasswordChange !== userId) {
-            closeChangePassword();
-            alert('You are not allowed to update this user.');
-            return;
-        }
-
-        fetch('/api/user/changePassword/' + userIdForPasswordChange, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                password: newPassword,
-                password_confirmation: newPasswordConfirmed,
-            })
+    document.getElementById('password-not-matching-change-password-' + theUserRole).style.display = 'none';
+    fetch('/api/user/changePassword/' + userId, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            oldPassword: oldPassword,
+            password: newPassword,
+            password_confirmation: newPasswordConfirmed,
         })
-            .then(async response => {
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    console.error(errorData.message || `Request failed with status ${response.status}`);
-                    return;
-                }
-                alert('Successfully');
-            })
-            .catch(error => console.error('Password change failed:', error.message));
-    }
-
-    closeChangePassword();
+    })
+        .then(async response => {
+            if (!response.ok) {
+                document.getElementById('Incorrect-password-' + (userRole === 'admin' ? 'admin' : 'teacher'))
+                    .style.display = 'block';
+                return;
+            }
+            alert('Successfully');
+            closeChangePassword();
+        })
+        .catch(error => console.error('Password change failed:', error.message));
 }
 
 ///////////////////// User deletion /////////////////////

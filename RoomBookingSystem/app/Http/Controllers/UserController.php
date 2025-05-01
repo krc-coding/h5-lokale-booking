@@ -93,8 +93,13 @@ class UserController extends Controller
         }
 
         $validated = $request->validate([
+            'oldPassword' => 'required',
             'password' => 'required|string|min:6|confirmed',
         ]);
+
+        if (!Hash::check($request->oldPassword, $user->password)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
 
         $user->password = Hash::make($validated['password']);
         $user->save();
