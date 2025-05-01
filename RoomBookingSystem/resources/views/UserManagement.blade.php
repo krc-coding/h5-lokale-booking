@@ -10,7 +10,7 @@
 <body>
     <div class="header-bar">
         <h1 id="title"></h1>
-        <div id="adminAddBtn">
+        <div id="adminAddBtn" style="display: none;">
             <button class="btn" onclick="openAddUser()">Add User</button>
         </div>
     </div>

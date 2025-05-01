@@ -50,6 +50,7 @@ function choosePageContextAndFillIt() {
         fetchUsers();
     }
     else {
+        title.innerText = 'You are not allowed here';
         teacherPage.innerHTML = '';
         adminPage.innerHTML = '';
         adminAddBtn.innerHTML = '';
