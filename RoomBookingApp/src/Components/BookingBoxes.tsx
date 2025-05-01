@@ -34,14 +34,10 @@ export const TopBox = (props: ITopBox) => {
             >
                 {timeToString(props.booking.start_time)} - {timeToString(props.booking.end_time)}
             </Box>
-            <Box
-                component={"span"}
-            >
+            <Box component={"span"}>
                 {props.booking.title}
             </Box>
-            <Box
-                component={"span"}
-            >
+            <Box component={"span"}>
                 [{props.rooms.find((room) => room.id == props.booking.room_id)?.room_number}]
             </Box>
         </Box>
