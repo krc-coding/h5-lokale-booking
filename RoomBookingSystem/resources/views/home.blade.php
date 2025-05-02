@@ -9,8 +9,10 @@
 
 <body>
     <div class="container mt-4" style="position: relative;">
-        <button class="btn btn-primary mb-3" id="authButton" style="position: absolute; top: 20px; right: 20px;"
-            onclick="handleAuthAction()">Login</button>
+        <div style="position: absolute; top: 20px; right: 20px;">
+            <button class="btn btn-primary mb-3" id="authButton" onclick="handleAuthAction()">Login</button>
+            <button class="btn btn-primary mb-3" id="userManageButton" style="display: none;">User management</button>
+        </div>
 
         <h1 class="mb-4">Bookings by Time Slot</h1>
 
@@ -188,11 +190,16 @@
         // Update the button text on page load based on token availability
         window.onload = function() {
             const authButton = document.getElementById('authButton');
+            const userManageButton = document.getElementById('userManageButton');
             const token = localStorage.getItem('authToken');
             if (token) {
                 authButton.textContent = 'Profile';
                 authButton.setAttribute('onclick',
                     'window.location.href = "/profile";');
+                
+                userManageButton.style.display = '';
+                userManageButton.setAttribute('onclick',
+                    'window.location.href = "/userManagement";');
             }
         };
     </script>
