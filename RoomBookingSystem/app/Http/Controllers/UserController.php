@@ -24,14 +24,19 @@ class UserController extends Controller
 
     public function getUser(user $user)
     {
-        $user = auth()->user(); 
+        $authUser = auth()->user();
 
-        if ($user->role !== 'admin' && $authUser->id != $user->id) {
+        if ($authUser->role !== 'admin' && $authUser->id != $user->id) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-
         return response(['user' => $user]);
+    }
+
+    public function getUserRole()
+    {
+        $authUser = auth()->user();
+        return response()->json(['role' => $authUser->role]);
     }
 
     public function createUser(Request $request)
@@ -71,7 +76,7 @@ class UserController extends Controller
         ]);
 
         $user->disabled = $validated['disabled'] ?? $user->disabled;
-        if ($user->role !== 'systemAdmin'){
+        if ($user->role !== 'systemAdmin') {
             $user->role = $validated['role'] ?? $user->role;
         }
 
@@ -88,8 +93,13 @@ class UserController extends Controller
         }
 
         $validated = $request->validate([
+            'oldPassword' => 'required',
             'password' => 'required|string|min:6|confirmed',
         ]);
+
+        if (!Hash::check($request->oldPassword, $user->password)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
 
         $user->password = Hash::make($validated['password']);
         $user->save();
@@ -105,7 +115,7 @@ class UserController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        if ($user->role == 'systemAdmin'){
+        if ($user->role == 'systemAdmin') {
             return response()->json(['message' => 'System admin cannot be deleted but only dissabled'], 401);
         }
 

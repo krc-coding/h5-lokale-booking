@@ -15,6 +15,7 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/createUser', [UserController::class, 'createUser']);
         Route::get('/getUser/{user}', [UserController::class, 'getUser']);
         Route::get('/getAllUsers', [UserController::class, 'getAllUsers']);
+        Route::get('/getRole', [UserController::class, 'getUserRole']);
         Route::put('/editUser/{user}', [UserController::class, 'editUser']);
         Route::put('/changePassword/{user}', [UserController::class, 'changePassword']);
         Route::delete('/deleteUser/{user}', [UserController::class, 'deleteUser']);
