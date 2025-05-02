@@ -10,7 +10,7 @@
 <body>
     <div class="container mt-4" style="position: relative;">
         <div style="position: absolute; top: 20px; right: 20px;">
-            <button class="btn btn-primary mb-3" id="authButton" onclick="handleAuthAction()">Login</button>
+            <button class="btn btn-primary mb-3" id="authButton" onclick="showLoginModal()">Login</button>
             <button class="btn btn-primary mb-3" id="userManageButton" style="display: none;">User management</button>
         </div>
 
@@ -41,63 +41,6 @@
     </div>
 
     <script>
-        // Handle the authentication action based on the current state (login or profile page)
-        function handleAuthAction() {
-            const token = localStorage.getItem('authToken');
-
-            if (token) {
-                // If the user is already logged in (has a token), redirect to profile
-                window.location.href = '/profile';
-            } else {
-                // If no token is found, show the login modal
-                showLoginModal();
-            }
-        }
-
-        // Function to show the login modal
-        function showLoginModal() {
-            const modal = new bootstrap.Modal(document.getElementById('loginModal'));
-            modal.show();
-        }
-
-        // Handle login form submission
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            // Send login data to the backend API
-            fetch('/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        username: username,
-                        password: password
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.token) {
-                        localStorage.setItem('authToken', data.token); // Store token in localStorage
-
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-                        modal.hide();
-
-                        window.location.href = '/'; // Reload the page to update button
-                    } else {
-                        // Display error if login fails
-                        document.getElementById('loginError').style.display = 'block';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('loginError').style.display = 'block';
-                });
-        });
-
         // Show all rooms in a modal
         function showRoomsModal() {
             const modal = new bootstrap.Modal(document.getElementById('roomsModal'));
@@ -196,7 +139,7 @@
                 authButton.textContent = 'Profile';
                 authButton.setAttribute('onclick',
                     'window.location.href = "/profile";');
-                
+
                 userManageButton.style.display = '';
                 userManageButton.setAttribute('onclick',
                     'window.location.href = "/userManagement";');

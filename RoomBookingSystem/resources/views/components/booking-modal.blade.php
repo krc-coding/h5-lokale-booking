@@ -35,3 +35,45 @@
         </form>
     </div>
 </div>
+
+<script>
+    function showBookingModal() {
+        const modal = new bootstrap.Modal(document.getElementById('bookingModal'));
+        modal.show();
+    }
+
+    // Submit booking
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const token = localStorage.getItem('authToken');
+        if (!token) return alert('Please login first.');
+
+        fetch('/api/booking/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    room_id: document.getElementById('room_id').value,
+                    title: document.getElementById('title').value,
+                    start_time: document.getElementById('start_time').value,
+                    end_time: document.getElementById('end_time').value,
+                })
+            })
+            .then(async r => {
+                const data = await r.json();
+                if (!r.ok) {
+                    alert(data.message || 'Booking failed.');
+                    return;
+                }
+                alert('Booking successful!');
+                location.reload();
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Something went wrong. Booking failed.');
+            });
+
+    });
+</script>

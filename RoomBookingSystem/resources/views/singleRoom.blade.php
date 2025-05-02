@@ -14,8 +14,10 @@
             Home
         </a>
 
-        <button class="btn btn-primary mb-3" id="authButton" style="position: absolute; top: 20px; right: 20px;"
-            onclick="handleAuthAction()">Login</button>
+        <div style="position: absolute; top: 20px; right: 20px;">
+            <button class="btn btn-primary mb-3" id="authButton" onclick="showLoginModal()">Login</button>
+            <button class="btn btn-primary mb-3" id="userManageButton" style="display: none;">User management</button>
+        </div>
 
         <h1 class="mb-1">{{ $room->name }}</h1>
         <p class="text-muted">{{ $room->description ?? 'No description available.' }}</p>
@@ -44,56 +46,6 @@
     <x-login-modal />
 
     <script>
-        function handleAuthAction() {
-            const token = localStorage.getItem('authToken');
-            if (token) {
-                window.location.href = '/profile';
-            } else {
-                const modal = new bootstrap.Modal(document.getElementById('loginModal'));
-                modal.show();
-            }
-        }
-
-        function showBookingModal() {
-            const modal = new bootstrap.Modal(document.getElementById('bookingModal'));
-            modal.show();
-        }
-
-        // Submit booking
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const token = localStorage.getItem('authToken');
-            if (!token) return alert('Please login first.');
-
-            fetch('/api/booking/create', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        room_id: document.getElementById('room_id').value,
-                        title: document.getElementById('title').value,
-                        start_time: document.getElementById('start_time').value,
-                        end_time: document.getElementById('end_time').value,
-                    })
-                })
-                .then(async r => {
-                    const data = await r.json();
-                    if (!r.ok) {
-                        alert(data.message || 'Booking failed.');
-                        return;
-                    }
-                    alert('Booking successful!');
-                    location.reload();
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert('Something went wrong. Booking failed.');
-                });
-
-        });
-
         function toLocalDate(dateString) {
             const date = new Date(dateString);
             return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes());
@@ -182,6 +134,22 @@
             if (token) {
                 btn.textContent = 'Profile';
                 btn.setAttribute('onclick', 'window.location.href = "/profile";');
+            }
+        };
+
+        // Update the button text on page load based on token availability
+        window.onload = function() {
+            const authButton = document.getElementById('authButton');
+            const userManageButton = document.getElementById('userManageButton');
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                authButton.textContent = 'Profile';
+                authButton.setAttribute('onclick',
+                    'window.location.href = "/profile";');
+
+                userManageButton.style.display = '';
+                userManageButton.setAttribute('onclick',
+                    'window.location.href = "/userManagement";');
             }
         };
     </script>
