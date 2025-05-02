@@ -94,3 +94,15 @@ body {
     justify-content: space-between;
     align-items: center;
 }
+
+.header-bar-with-color {
+    background-color: #e6e6e6;
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+.card .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 0.5rem;
+}
