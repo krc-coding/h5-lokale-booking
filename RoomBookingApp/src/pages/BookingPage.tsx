@@ -159,33 +159,30 @@ const BookingPage = () => {
     }
 
     return (
-        <Box sx={{ display: "flex", height: "100%", width: "100%", flexDirection: "column" }}>
-            <h1>Room Booking System</h1>
-            <Box sx={{ height: "100%", width: "100%", backgroundColor: "white" }}>
-                <Table stickyHeader size="small" sx={{ height: "fit-content" }}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={{ width: "10%" }}>Time period</TableCell>
-                            <TableCell>Bookings</TableCell>
+        <Box sx={{ height: "100%", width: "100%", backgroundColor: "white" }}>
+            <Table stickyHeader size="small" sx={{ height: "fit-content" }}>
+                <TableHead>
+                    <TableRow>
+                        <TableCell sx={{ width: "10%" }}>Time period</TableCell>
+                        <TableCell>Bookings</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {timePeriods().map((timePeriod) => (
+                        <TableRow
+                            key={`${timePeriod.hour}:${timePeriod.minutes}`}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <TableCell component="th" scope="row">
+                                {timePeriod.hour}:{timePeriod.minutes}
+                            </TableCell>
+                            <TableCell component="th" scope="row" sx={{ padding: "0px" }}>
+                                {getBookingsForTimePeriod(timePeriod)}
+                            </TableCell>
                         </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {timePeriods().map((timePeriod) => (
-                            <TableRow
-                                key={`${timePeriod.hour}:${timePeriod.minutes}`}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row">
-                                    {timePeriod.hour}:{timePeriod.minutes}
-                                </TableCell>
-                                <TableCell component="th" scope="row" sx={{ padding: "0px" }}>
-                                    {getBookingsForTimePeriod(timePeriod)}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </Box>
+                    ))}
+                </TableBody>
+            </Table>
         </Box>
     );
 };
