@@ -29,8 +29,8 @@
 ### 30-04-2025
 - started making single room page
 
-### 01-04-2025
+### 01-05-2025
 - added the option to book room from single room page
 
-### 01-04-2025
+### 02-05-2025
 - finished making single room page
