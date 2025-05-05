@@ -25,7 +25,8 @@ Route::middleware('auth:api')->group(function () {
 Route::prefix('/room')->group(function () {
     Route::get('', [RoomController::class, 'getAllRooms']);
     Route::get('/{room}', [RoomController::class, 'getRoom']);
-    route::get('/getRoomsAndTodayBookings', [RoomController::class, 'getRoomsAndTodayBookings']);
+    Route::get('/getRoomsAndTodayBookings', [RoomController::class, 'getRoomsAndTodayBookings']);
+    Route::get('/showRoom/{id}', [RoomController::class, 'showRoom']);
 
     Route::middleware('auth:api')->group(function () {
         Route::post('/create', [RoomController::class, 'createRoom']);
