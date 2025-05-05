@@ -10,8 +10,12 @@ function getToken() {
     return localStorage.getItem('authToken');
 }
 
+function notAdmin() {
+    return userRole !== 'admin' && userRole !== 'systemAdmin';
+}
+
 function updateButtons() {
-    if (userRole === 'admin' || userRole === 'systemAdmin') {
+    if (!notAdmin()) {
         // Remove the local styling: display.
         document.getElementById('roomAddBtn').style.display = '';
         document.getElementById('groupAddBtn').style.display = '';
@@ -96,40 +100,45 @@ function createRoomCheckbox(room) {
 
 function renderRooms() {
     const grid = document.getElementById('roomGrid');
-    const template = document.getElementById('room-card-template');
-    grid.innerHTML = ''; // Clear grid
-    grid.appendChild(template); // Save the template again
-
+    const cardTemplate = document.getElementById('room-card-template');
     const addGroupModal = document.getElementById('rooms-to-group-add');
     const addRoomToGroupModal = document.getElementById('add-rooms-to-group');
     const removeRoomFromGroupModal = document.getElementById('remove-rooms-from-group');
 
+    // Clear to not have dubble
+    grid.innerHTML = '';
+    addGroupModal.innerHTML = '';
+    addRoomToGroupModal.innerHTML = '';
+    removeRoomFromGroupModal.innerHTML = '';
+
+    grid.appendChild(cardTemplate); // Save the template again
+
     rooms.forEach(room => {
-        const clone = template.content.cloneNode(true);
+        const card = cardTemplate.content.cloneNode(true);
 
-        clone.querySelector('.name').textContent = room.name;
-        clone.querySelector('.room-number').textContent = room.room_number;
-        clone.querySelector('.max-people').textContent = room.max_people;
-        clone.querySelector('.description').textContent = room.description;
+        card.querySelector('.name').textContent = room.name;
+        card.querySelector('.room-number').textContent = room.room_number;
+        card.querySelector('.max-people').textContent = room.max_people;
+        card.querySelector('.description').textContent = room.description;
 
-        if (userRole === 'admin') {
-            clone.querySelector('.editRoomBtns').style.display = 'block';
+        if (!notAdmin()) {
+            card.querySelector('.editRoomBtns').style.display = 'block';
 
-            clone.querySelector('.edit-btn').onclick = () => openRoomEdit();
-            clone.querySelector('.delete-btn').onclick = () => deleteRoom();
+            card.querySelector('.edit-btn').onclick = () => openRoomEdit(room);
+            card.querySelector('.delete-btn').onclick = () => deleteRoom(room);
+
+            // This is to the modal, to crud on group with rooms
+            addGroupModal.appendChild(createRoomCheckbox(room));
+            addGroupModal.appendChild(document.createElement("br"));
+
+            addRoomToGroupModal.appendChild(createRoomCheckbox(room));
+            addRoomToGroupModal.appendChild(document.createElement("br"));
+
+            removeRoomFromGroupModal.appendChild(createRoomCheckbox(room));
+            removeRoomFromGroupModal.appendChild(document.createElement("br"));
         }
 
-        grid.appendChild(clone);
-
-        // Modal
-        addGroupModal.appendChild(createRoomCheckbox(room));
-        addGroupModal.appendChild(document.createElement("br"));
-
-        addRoomToGroupModal.appendChild(createRoomCheckbox(room));
-        addRoomToGroupModal.appendChild(document.createElement("br"));
-
-        removeRoomFromGroupModal.appendChild(createRoomCheckbox(room));
-        removeRoomFromGroupModal.appendChild(document.createElement("br"));
+        grid.appendChild(card);
     });
 }
 
@@ -156,7 +165,7 @@ function renderGroups() {
             roomGrid.appendChild(roomTemplateClone);
         })
 
-        if (userRole === 'admin') {
+        if (!notAdmin()) {
             groupTemplateClone.querySelector('.editRoomBtns').style.display = 'block';
 
             groupTemplateClone.querySelector('.edit-btn').onclick = () => openGroupEdit(group);
@@ -167,6 +176,180 @@ function renderGroups() {
 
         grid.appendChild(groupTemplateClone);
     });
+}
+
+///////////////////// Room modal functions /////////////////////
+
+function closeRoomModal() {
+    document.getElementById('room-modal').style.display = 'none';
+    document.getElementById('room-name').value = '';
+    document.getElementById('room-number').value = '';
+    document.getElementById('room-max-people').value = '';
+    document.getElementById('room-description').value = '';
+}
+
+function submitRoomModal() {
+    const name = document.getElementById('room-name').value ?? '';
+    const roomNumber = document.getElementById('room-number').value ?? '';
+    const maxPeople = document.getElementById('room-max-people').value ?? '';
+    const description = document.getElementById('room-description').value ?? '';
+
+    if (notAdmin()) {
+        alert('You are not allowed to ' + window.roomModalAction + ' rooms');
+        return;
+    }
+
+    if (name === '' || roomNumber === '' || maxPeople === '' || description === '') {
+        alert('One or more of the fields are empty');
+        return;
+    }
+
+    if (window.submitRoomModalFunction) {
+        window.submitRoomModalFunction(name, roomNumber, maxPeople, description);
+        window.submitRoomModalFunction = null;
+    }
+}
+
+///////////////////// Add room /////////////////////
+
+function openAddRoom() {
+    document.getElementById('room-modal').style.display = '';
+    document.getElementById('submitRoomBtn').innerText = 'Create';
+    window.submitRoomModalFunction = submitAddRoom;
+    window.roomModalAction = 'create';
+}
+
+function submitAddRoom(name, roomNumber, maxPeople, description) {
+    fetch('/api/room/create', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${getToken()}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            name: name,
+            description: description,
+            room_number: roomNumber,
+            max_people: maxPeople,
+        })
+    })
+        .then(async response => {
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                console.error(data.message || `Request failed with status ${response.status}`);
+                return;
+            }
+
+            alert('Successfully created room: ' + data.data.name);
+            rooms.push({
+                id: data.data.id,
+                name: data.data.name,
+                description: data.data.description,
+                room_number: data.data.room_number,
+                max_people: data.data.max_people,
+            });
+            renderRooms();
+        })
+        .then(() => closeRoomModal())
+        .catch(error => console.error('Failed to create room: ', error.message));
+}
+
+///////////////////// Edit room /////////////////////
+
+function openRoomEdit(room) {
+    console.log(room);
+    console.log(room.maxPeople);
+
+    document.getElementById('room-name').value = room.name;
+    document.getElementById('room-number').value = room.room_number;
+    document.getElementById('room-max-people').value = room.max_people;
+    document.getElementById('room-description').value = room.description;
+    document.getElementById('room-modal').style.display = '';
+    document.getElementById('submitRoomBtn').innerText = 'Save';
+    window.submitRoomModalFunction = submitRoomEdit;
+    window.updateRoomId = room.id;
+    window.roomModalAction = 'update';
+}
+
+function submitRoomEdit(name, roomNumber, maxPeople, description) {
+    if (!window.updateRoomId) {
+        alert('Internal Error, if this continues please contract support.');
+        return;
+    }
+
+    const roomId = window.updateRoomId;
+    window.updateRoomId = null;
+    fetch('/api/room/update/' + roomId, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${getToken()}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            name: name,
+            description: description,
+            room_number: roomNumber,
+            max_people: maxPeople,
+        })
+    })
+        .then(async response => {
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                console.error(data.message || `Request failed with status ${response.status}`);
+                return;
+            }
+
+            alert('Successfully updated: ' + data.data.name);
+            const index = rooms.findIndex(r => r.id === data.data.id);
+            if (index !== -1) {
+                rooms[index] = data.data;
+                renderRooms();
+            }
+        })
+        .then(() => closeRoomModal())
+        .catch(error => console.error('Failed to update room: ', error.message));
+}
+
+///////////////////// Delete room /////////////////////
+function deleteRoom(room) {
+    const token = getToken();
+
+    if (notAdmin()) {
+        alert('You are not allowed to delete rooms.');
+        return;
+    }
+
+    const confirmed = confirm(`Are you sure you want to delete this room: ${room.name}?`);
+    if (!confirmed) {
+        return;
+    }
+
+    fetch('/api/room/delete/' + room.id, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json'
+        }
+    })
+        .then(async response => {
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error(errorData.message || `Request failed with status ${response.status}`);
+                return;
+            }
+
+            alert('Successfully deleted room');
+            const index = rooms.findIndex(r => r.id === room.id);
+            if (index !== -1) {
+                rooms.splice(index, 1);
+                renderRooms();
+            }
+        })
+        .catch(error => console.error('Delete failed:', error.message));
 }
 
 ///////////////////// Add group /////////////////////
@@ -182,7 +365,7 @@ function closeAddGroup() {
 }
 
 function submitAddGroup() {
-    if (userRole !== 'admin') {
+    if (notAdmin()) {
         alert('You are not allowed to create groups.');
         return;
     }
@@ -217,7 +400,7 @@ function submitAddGroup() {
                 return;
             }
 
-            alert('Successfully created: ' + data.name);
+            alert('Successfully created group: ' + data.name);
             groups.push({
                 id: data.id,
                 name: data.name,
@@ -243,7 +426,7 @@ function closeGroupEdit() {
 }
 
 function submitGroupEdit() {
-    if (userRole !== 'admin') {
+    if (notAdmin()) {
         alert('You are not allowed to edit groups.');
         return;
     }
@@ -312,7 +495,7 @@ function closeAddRoomToGroup() {
 }
 
 function submitAddRoomToGroup() {
-    if (userRole !== 'admin') {
+    if (notAdmin()) {
         alert('You are not allowed to add rooms to groups.');
         return;
     }
@@ -378,7 +561,7 @@ function closeRemoveRoomsFromGroup() {
 }
 
 function submitRemoveRoomsFromGroup() {
-    if (userRole !== 'admin') {
+    if (notAdmin()) {
         alert('You are not allowed to remove rooms from groups.');
         return;
     }
@@ -423,7 +606,7 @@ function submitRemoveRoomsFromGroup() {
 function deleteGroup(group) {
     const token = getToken();
 
-    if (userRole !== 'admin') {
+    if (notAdmin()) {
         alert('You are not allowed to delete groups.');
         return;
     }

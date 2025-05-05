@@ -15,7 +15,7 @@
         <div>
             <button class="btn" onclick="changePage('/')">Back</button>
             <div id="roomAddBtn" style="display: none;">
-                <button class="btn" onclick="openAddUser()">Add Room</button>
+                <button class="btn" onclick="openAddRoom()">Add Room</button>
             </div>
         </div>
     </div>
@@ -80,6 +80,26 @@
     </div>
 
     <div id="modals">
+        <!-- Add and edit room -->
+        <div id="room-modal" class="custom-alert" style="display: none;">
+            <div class="custom-alert-box">
+                <p>Enter room details:</p>
+                <label>Name:</label>
+                <input id="room-name" type="text" placeholder="Name" /><br /><br />
+
+                <label>Room number:</label>
+                <input id="room-number" type="text" placeholder="Room number" /><br /><br />
+
+                <label>Max people:</label>
+                <input id="room-max-people" type="number" placeholder="Max people" /><br /><br />
+
+                <label>Description:</label>
+                <input id="room-description" type="text" placeholder="Description" /><br /><br />
+
+                <button id="submitRoomBtn" onclick="submitRoomModal()">Create</button>
+                <button onclick="closeRoomModal()">Cancel</button>
+            </div>
+        </div>
         <!-- Add group -->
         <div id="add-group" class="custom-alert" style="display: none;">
             <div class="custom-alert-box">
