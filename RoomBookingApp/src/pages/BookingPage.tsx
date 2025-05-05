@@ -4,6 +4,7 @@ import { IRoom } from "../types/IRoom";
 import { IBooking } from "../types/IBooking";
 import { Box, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { BottomBox, EmptyBox, MiddleBox, TopBox } from "../Components/BookingBoxes";
+import CreateBookingDialog from "../Components/CreateBookingModal";
 
 const timePeriods = () => {
     const timePeriods = [];
@@ -49,13 +50,17 @@ const BookingPage = () => {
                 bookings.sort((a, b) => a.start_time.getTime() - b.start_time.getTime());
                 let bookingIndex = 0;
                 bookings.forEach((booking) => {
-                    const overlapsBookings = bookings.some((tempBooking) => {
+                    const overlapBookings = bookings.filter((tempBooking) => {
                         if (tempBooking.id == booking.id) return false;
-                        if (tempBooking.start_time > booking.end_time) return false;
-                        if (tempBooking.end_time < booking.start_time) return false;
+                        if (tempBooking.start_time >= booking.end_time) return false;
+                        if (tempBooking.end_time <= booking.start_time) return false;
                         return true;
                     });
-                    if (overlapsBookings) {
+
+                    if (overlapBookings.length > 0 && !overlapBookings.some((tempBooking) => tempBooking.index === 0)) {
+                        booking.index = 0;
+                        bookingIndex = 1
+                    } else if (overlapBookings.length > 0) {
                         booking.index = bookingIndex;
                         bookingIndex++;
                     } else {
@@ -99,6 +104,7 @@ const BookingPage = () => {
                 end_time > periodDateTime
             );
         });
+        filteredBookings.sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
         return (
             <Box sx={{ display: "flex", height: "100%" }}>
@@ -160,6 +166,7 @@ const BookingPage = () => {
 
     return (
         <Box sx={{ height: "100%", width: "100%", backgroundColor: "white" }}>
+            <CreateBookingDialog rooms={rooms} />
             <Table stickyHeader size="small" sx={{ height: "fit-content" }}>
                 <TableHead>
                     <TableRow>

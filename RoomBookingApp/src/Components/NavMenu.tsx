@@ -26,6 +26,9 @@ const NavMenu = (props: INavMenu) => {
         const request = resourceManager.makeRequest("/api/logout", "POST");
         request.getResponse().then(() => {
             props.setIsAuthed(false);
+            resourceManager.setAuthTokenHeader("");
+        }).catch(() => {
+            window.location.reload();
         });
     }
 
