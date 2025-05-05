@@ -46,7 +46,7 @@
     </div>
 
     <div class="header-bar">
-        <h1>Groups:</h1>
+        <h2>Groups:</h2>
         <div id="groupAddBtn" style="display: none;">
             <button class="btn" onclick="openAddGroup()">Add Group</button>
         </div>

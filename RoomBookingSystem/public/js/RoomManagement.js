@@ -2,6 +2,10 @@ const rooms = [];
 const groups = [];
 let userRole = 'nothing';
 
+function changePage(page) {
+    window.location.href = page;
+}
+
 function getToken() {
     return localStorage.getItem('authToken');
 }
@@ -158,7 +162,7 @@ function renderGroups() {
             groupTemplateClone.querySelector('.edit-btn').onclick = () => openGroupEdit(group);
             groupTemplateClone.querySelector('.add-btn').onclick = () => openAddRoomToGroup(group);
             groupTemplateClone.querySelector('.remove-rooms-btn').onclick = () => openRemoveRoomsFromGroup(group);
-            groupTemplateClone.querySelector('.delete-btn').onclick = () => deleteRoom();
+            groupTemplateClone.querySelector('.delete-btn').onclick = () => deleteGroup(group);
         }
 
         grid.appendChild(groupTemplateClone);
@@ -416,7 +420,7 @@ function submitRemoveRoomsFromGroup() {
 }
 
 ///////////////////// Group deletion /////////////////////
-function deleteUser(group) {
+function deleteGroup(group) {
     const token = getToken();
 
     if (userRole !== 'admin') {
@@ -424,12 +428,12 @@ function deleteUser(group) {
         return;
     }
 
-    const confirmed = confirm(`Are you sure you want to delete ${group.name}?`);
+    const confirmed = confirm(`Are you sure you want to delete this group: ${group.name}?`);
     if (!confirmed) {
         return;
     }
 
-    fetch('/api/user/deleteGroup/' + group.id, {
+    fetch('/api/group/deleteGroup/' + group.id, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -447,7 +451,7 @@ function deleteUser(group) {
             const index = groups.findIndex(g => g.id === group.id);
             if (index !== -1) {
                 groups.splice(index, 1);
-                renderUsers();
+                renderGroups();
             }
         })
         .catch(error => console.error('Delete failed:', error.message));
