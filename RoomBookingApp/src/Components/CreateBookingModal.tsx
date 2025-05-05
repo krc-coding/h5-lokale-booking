@@ -30,14 +30,16 @@ const CreateBookingDialog = (props: ICreateBookingDialog) => {
         setErrorMessage("");
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries((formData as any).entries());
-        console.log(formJson);
         const request = resourceManager.makeRequest("/api/booking/create", "POST", JSON.stringify(formJson), { headers: { "Content-Type": "application/json" } });
-        request.getResponse().then((response) => {
-            console.log(response);
+        request.getResponse().then(() => {
             handleCloseDialog();
             window.location.reload();
         }).catch((error) => {
-            setErrorMessage(error.response.data.error_message);
+            if (error.response.data.error_message) {
+                setErrorMessage(error.response.data.error_message);
+            } else if (error.response.data.message) {
+                setErrorMessage(error.response.data.message);
+            }
         });
     };
 
@@ -121,7 +123,9 @@ const CreateBookingDialog = (props: ICreateBookingDialog) => {
                             variant="outlined"
                         />
                     </Box>
-                    {errorMessage && <span>{errorMessage}</span>}
+                    <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+                        {errorMessage && <span>{errorMessage}</span>}
+                    </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog}>Cancel</Button>
