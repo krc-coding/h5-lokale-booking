@@ -33,6 +33,12 @@ class RoomController extends Controller
         return view('home', compact('rooms'));
     }
 
+    public function showRoom($id)
+    {
+        $room = Room::with('bookings')->findOrFail($id);
+        return view('singleRoom', compact('room'));
+    }
+
     public function createRoom(Request $request)
     {
         $user = auth()->user();
