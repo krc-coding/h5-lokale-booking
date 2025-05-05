@@ -22,7 +22,7 @@ const NavMenu = (props: INavMenu) => {
     };
 
     const logout = () => {
-        console.log("logout");
+        window.api.deleteAuthToken();
         const request = resourceManager.makeRequest("/api/logout", "POST");
         request.getResponse().then(() => {
             props.setIsAuthed(false);

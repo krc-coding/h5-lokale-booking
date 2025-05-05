@@ -9,7 +9,7 @@ interface IHeader {
 }
 
 const Header = (props: IHeader) => {
-    const [isAuthed, setIsAuthed] = useState(false);
+    const [isAuthed, setIsAuthed] = useState(document.body.dataset["isAuthed"] == "true" ? true : false);
 
     return (
         <Box sx={{ display: "flex", width: "100%", justifyContent: "space-between" }}>

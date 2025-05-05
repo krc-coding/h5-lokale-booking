@@ -32,6 +32,7 @@ const LoginDialog = (props: ILoginDialog) => {
         request.getResponse().then((response) => {
             handleCloseDialog();
             resourceManager.setAuthTokenHeader(response.data.token);
+            window.api.saveAuthToken(response.data.token);
             props.setIsAuthed(true);
         }).catch((error) => {
             setErrorMessage(error.response.data.error_message);
