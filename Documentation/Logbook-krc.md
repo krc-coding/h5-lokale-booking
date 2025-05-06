@@ -58,4 +58,4 @@
 ## 06-05-2025
 
 - Created system admin user migration.
-- Started work on profile page.
+- Created simple profile page.
