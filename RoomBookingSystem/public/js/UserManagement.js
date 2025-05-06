@@ -2,35 +2,13 @@ let userRole = '';
 const users = [];
 let teacher;
 
-function changePage(page) {
-    window.location.href = page;
-}
-
 // Help functions
 
-function getUserId(exitingToken = null) {
-    const token = exitingToken ?? getToken();
-    return JSON.parse(atob(token.split('.')[1])).sub;
-}
-
-function getToken() {
-    return localStorage.getItem('authToken');
-}
-
 function fetchUserole() {
-    fetch('/api/user/getRole', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Accept': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then(role => {
-            userRole = role.role;
-            choosePageContextAndFillIt();
-        })
-        .catch(error => console.error('Error:', error));
+    Get('/api/user/getRole', async data => {
+        userRole = data.role;
+        choosePageContextAndFillIt();
+    });
 }
 
 function choosePageContextAndFillIt() {
@@ -48,7 +26,7 @@ function choosePageContextAndFillIt() {
         modals.innerHTML = '';
         fetchTeacher();
     }
-    else if (userRole === 'admin' || userRole === 'systemAdmin') {
+    else if (!notAdmin(userRole)) {
         title.innerText = 'Users';
         teacherPage.innerHTML = '';
         adminPage.style.display = 'block';
@@ -67,43 +45,24 @@ function choosePageContextAndFillIt() {
 ///////////////////// Get users /////////////////////
 
 function fetchTeacher() {
-    const token = getToken();
-    fetch('/api/user/getUser/' + getUserId(token), {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            teacher = data.user;
-            renderTeacher();
-        })
-        .catch(error => console.error('Error:', error));
+    Get('/api/user/getUser/' + getUserId(), async data => {
+        teacher = data.user;
+        renderTeacher();
+    });
 }
 
 function fetchUsers() {
-    fetch('/api/user/getAllUsers', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Accept': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(user => {
-                users.push({
-                    id: user.id,
-                    username: user.username,
-                    role: user.role,
-                    disabled: user.disabled
-                });
+    Get('/api/user/getAllUsers', async newUsers => {
+        newUsers.forEach(user => {
+            users.push({
+                id: user.id,
+                username: user.username,
+                role: user.role,
+                disabled: user.disabled
             });
-            renderUsers();
-        })
-        .catch(error => console.error('Error:', error));
+        });
+        renderUsers();
+    });
 }
 
 ///////////////////// Render users /////////////////////
@@ -154,7 +113,7 @@ function closeAddUser() {
 }
 
 function submitAddUser() {
-    if (userRole !== 'admin' && userRole !== 'systemAdmin') {
+    if (notAdmin(userRole)) {
         closeAddUser();
         alert("You are not allowed to create users.");
         return;
@@ -175,40 +134,24 @@ function submitAddUser() {
         return;
     }
 
-    fetch('/api/user/createUser', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            username: username,
-            role: role,
-            password: password,
-            password_confirmation: passwordConfirmed,
-        })
-    })
-        .then(async response => {
-            const data = await response.json().catch(() => ({}));
+    const data = {
+        username: username,
+        role: role,
+        password: password,
+        password_confirmation: passwordConfirmed,
+    }
 
-            if (!response.ok) {
-                console.error(data.message || `Request failed with status ${response.status}`);
-                return;
-            }
-
-            alert('Successfully created: ' + data.user.username);
-            users.push({
-                id: data.user.id,
-                username: data.user.username,
-                role: data.user.role,
-                disabled: data.user.disabled
-            });
-            renderUsers();
-        })
-        .catch(error => console.error('Failed to create new user: ', error.message));
-
-    closeAddUser();
+    Post('/api/user/createUser', data, async newUser => {
+        alert('Successfully created: ' + newUser.user.username);
+        users.push({
+            id: newUser.user.id,
+            username: newUser.user.username,
+            role: newUser.user.role,
+            disabled: newUser.user.disabled
+        });
+        renderUsers();
+        closeAddUser();
+    });
 }
 
 ///////////////////// User edit /////////////////////
@@ -230,7 +173,6 @@ function closeUserEdit() {
 function submitUserEdit() {
     const role = document.getElementById('role-input-edit-user').value;
     const disabled = document.getElementById('disabled-input').checked;
-    const token = getToken();
 
     if (window.userEdit) {
         let userEdit = window.userEdit;
@@ -240,44 +182,28 @@ function submitUserEdit() {
             return;
         }
 
-        if (userRole !== 'admin' && userEdit.id !== getUserId(token)) {
+        if (userRole !== 'admin' && userEdit.id !== getUserId()) {
             closeUserEdit();
             alert('You are not allowed to update this user.');
             return;
         }
 
-        fetch('/api/user/editUser/' + userEdit.id, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                role: role,
-                disabled: disabled,
-            })
-        })
-            .then(async response => {
-                const data = await response.json().catch(() => ({}));
+        const data = {
+            role: role,
+            disabled: disabled,
+        };
 
-                if (!response.ok) {
-                    console.error(data.message || `Request failed with status ${response.status}`);
-                    return;
-                }
-
-                alert('Successfully editing: ' + data.user.username);
-                const index = users.findIndex(user => user.id === data.user.id);
-                if (index !== -1) {
-                    users[index].role = data.user.role;
-                    users[index].disabled = data.user.disabled;
-                    renderUsers();
-                }
-            })
-            .catch(error => console.error('Update failed:', error.message));
+        Put('/api/user/editUser/' + userEdit.id, data, async updatedUser => {
+            alert('Successfully editing: ' + updatedUser.user.username);
+            const index = users.findIndex(user => user.id === updatedUser.user.id);
+            if (index !== -1) {
+                users[index].role = updatedUser.user.role;
+                users[index].disabled = updatedUser.user.disabled;
+                renderUsers();
+            }
+            closeUserEdit();
+        });
     }
-
-    closeUserEdit();
 }
 
 ///////////////////// User password edit /////////////////////
@@ -300,9 +226,8 @@ function closeChangePassword() {
 }
 
 function submitChangePassword() {
-    const token = getToken();
-    const userId = getUserId(token);
-    const theUserRole = userRole === 'admin' ? 'admin' : 'teacher';
+    const userId = getUserId();
+    const theUserRole = notAdmin(userRole) ? 'teacher' : 'admin';
 
     let oldPassword = document.getElementById('old-password-' + theUserRole).value ?? '';
     let newPassword = document.getElementById('password-' + theUserRole).value ?? '';
@@ -319,35 +244,20 @@ function submitChangePassword() {
     }
 
     document.getElementById('password-not-matching-change-password-' + theUserRole).style.display = 'none';
-    fetch('/api/user/changePassword/' + userId, {
-        method: 'PUT',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            oldPassword: oldPassword,
-            password: newPassword,
-            password_confirmation: newPasswordConfirmed,
-        })
-    })
-        .then(async response => {
-            if (!response.ok) {
-                document.getElementById('Incorrect-password-' + (userRole === 'admin' ? 'admin' : 'teacher'))
-                    .style.display = 'block';
-                return;
-            }
-            alert('Successfully');
-            closeChangePassword();
-        })
-        .catch(error => console.error('Password change failed:', error.message));
+    const data = {
+        oldPassword: oldPassword,
+        password: newPassword,
+        password_confirmation: newPasswordConfirmed,
+    };
+
+    Put('/api/user/changePassword/' + userId, data, async message => {
+        alert('Successfully');
+        closeChangePassword();
+    });
 }
 
 ///////////////////// User deletion /////////////////////
 function deleteUser(user) {
-    const token = getToken();
-
     if (userRole !== 'admin') {
         alert('You are not allowed to delete users.');
         return;
@@ -356,7 +266,7 @@ function deleteUser(user) {
         alert(`You can not delete ${user.username}, only disable this user.`);
         return;
     }
-    if (user.id === getUserId(token)) {
+    if (user.id === getUserId()) {
         alert('You are not allow to delete yourself.');
         return;
     }
@@ -366,28 +276,14 @@ function deleteUser(user) {
         return;
     }
 
-    fetch('/api/user/deleteUser/' + user.id, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json'
+    Delete('/api/user/deleteUser/' + user.id, async message => {
+        alert('Successfully deleting user');
+        const index = users.findIndex(u => u.id === user.id);
+        if (index !== -1) {
+            users.splice(index, 1);
+            renderUsers();
         }
-    })
-        .then(async response => {
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                console.error(errorData.message || `Request failed with status ${response.status}`);
-                return;
-            }
-
-            alert('Successfully deleting user');
-            const index = users.findIndex(u => u.id === user.id);
-            if (index !== -1) {
-                users.splice(index, 1);
-                renderUsers();
-            }
-        })
-        .catch(error => console.error('Delete failed:', error.message));
+    });
 }
 
 // Start fetching users:

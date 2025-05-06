@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Room Management</title>
     <link rel="stylesheet" href="{{ asset('css/Management.css') }}">
+    <script src="{{ asset('js/ResourceManager.js') }}"></script>
 </head>
 
 <body>

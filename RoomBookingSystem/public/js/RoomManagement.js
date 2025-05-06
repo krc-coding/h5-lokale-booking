@@ -2,20 +2,8 @@ const rooms = [];
 const groups = [];
 let userRole = 'nothing';
 
-function changePage(page) {
-    window.location.href = page;
-}
-
-function getToken() {
-    return localStorage.getItem('authToken');
-}
-
-function notAdmin() {
-    return userRole !== 'admin' && userRole !== 'systemAdmin';
-}
-
 function updateButtons() {
-    if (!notAdmin()) {
+    if (!notAdmin(userRole)) {
         // Remove the local styling: display.
         document.getElementById('roomAddBtn').style.display = '';
         document.getElementById('groupAddBtn').style.display = '';
@@ -23,33 +11,17 @@ function updateButtons() {
 }
 
 function fetchUserole() {
-    fetch('/api/user/getRole', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Accept': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then(role => userRole = role.role)
-        .then(async () => {
-            updateButtons();
-            await fetchRooms(); // wait for it to finishes
-            fetchGroups();
-        })
-        .catch(error => console.error('Error:', error));
+    Get('/api/user/getRole', async (role) => {
+        userRole = role.role;
+        updateButtons();
+        await fetchRooms(); // wait for it to finishes
+        fetchGroups();
+    });
 }
 
 async function fetchRooms() {
-    await fetch('/api/room', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Accept': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then(newRooms => newRooms.forEach(room => {
+    Get('/api/room', async newRooms => {
+        newRooms.forEach(room => {
             rooms.push({
                 id: room.id,
                 name: room.name,
@@ -57,29 +29,22 @@ async function fetchRooms() {
                 room_number: room.room_number,
                 max_people: room.max_people,
             });
-        }))
-        .then(() => renderRooms())
-        .catch(error => console.error('Error:', error));
+        });
+        renderRooms();
+    });
 }
 
 function fetchGroups() {
-    fetch('/api/group/getGroups', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Accept': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then(newGroups => newGroups.forEach(group => {
+    Get('/api/group/getGroups', async newGroups => {
+        newGroups.forEach(group => {
             groups.push({
                 id: group.id,
                 name: group.name,
                 roomIds: group.rooms.map(room => room.id)
             });
-        }))
-        .then(() => renderGroups())
-        .catch(error => console.error('Error:', error));
+        });
+        renderGroups();
+    });
 }
 
 ///////////////////// Render functions /////////////////////
@@ -121,7 +86,7 @@ function renderRooms() {
         card.querySelector('.max-people').textContent = room.max_people;
         card.querySelector('.description').textContent = room.description;
 
-        if (!notAdmin()) {
+        if (!notAdmin(userRole)) {
             card.querySelector('.editRoomBtns').style.display = 'block';
 
             card.querySelector('.edit-btn').onclick = () => openRoomEdit(room);
@@ -165,7 +130,7 @@ function renderGroups() {
             roomGrid.appendChild(roomTemplateClone);
         })
 
-        if (!notAdmin()) {
+        if (!notAdmin(userRole)) {
             groupTemplateClone.querySelector('.editRoomBtns').style.display = 'block';
 
             groupTemplateClone.querySelector('.edit-btn').onclick = () => openGroupEdit(group);
@@ -194,7 +159,7 @@ function submitRoomModal() {
     const maxPeople = document.getElementById('room-max-people').value ?? '';
     const description = document.getElementById('room-description').value ?? '';
 
-    if (notAdmin()) {
+    if (notAdmin(userRole)) {
         alert('You are not allowed to ' + window.roomModalAction + ' rooms');
         return;
     }
@@ -220,40 +185,25 @@ function openAddRoom() {
 }
 
 function submitAddRoom(name, roomNumber, maxPeople, description) {
-    fetch('/api/room/create', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            name: name,
-            description: description,
-            room_number: roomNumber,
-            max_people: maxPeople,
-        })
-    })
-        .then(async response => {
-            const data = await response.json().catch(() => ({}));
+    const data = {
+        name: name,
+        description: description,
+        room_number: roomNumber,
+        max_people: maxPeople,
+    }
 
-            if (!response.ok) {
-                console.error(data.message || `Request failed with status ${response.status}`);
-                return;
-            }
-
-            alert('Successfully created room: ' + data.data.name);
-            rooms.push({
-                id: data.data.id,
-                name: data.data.name,
-                description: data.data.description,
-                room_number: data.data.room_number,
-                max_people: data.data.max_people,
-            });
-            renderRooms();
-        })
-        .then(() => closeRoomModal())
-        .catch(error => console.error('Failed to create room: ', error.message));
+    Post('/api/room/create', data, async room => {
+        alert('Successfully created room: ' + room.data.name);
+        rooms.push({
+            id: room.data.id,
+            name: room.data.name,
+            description: room.data.description,
+            room_number: room.data.room_number,
+            max_people: room.data.max_people,
+        });
+        renderRooms();
+        closeRoomModal();
+    });
 }
 
 ///////////////////// Edit room /////////////////////
@@ -278,44 +228,29 @@ function submitRoomEdit(name, roomNumber, maxPeople, description) {
 
     const roomId = window.updateRoomId;
     window.updateRoomId = null;
-    fetch('/api/room/update/' + roomId, {
-        method: 'PUT',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            name: name,
-            description: description,
-            room_number: roomNumber,
-            max_people: maxPeople,
-        })
-    })
-        .then(async response => {
-            const data = await response.json().catch(() => ({}));
+    const data = {
+        name: name,
+        description: description,
+        room_number: roomNumber,
+        max_people: maxPeople,
+    }
 
-            if (!response.ok) {
-                console.error(data.message || `Request failed with status ${response.status}`);
-                return;
-            }
-
-            alert('Successfully updated: ' + data.data.name);
-            const index = rooms.findIndex(r => r.id === data.data.id);
-            if (index !== -1) {
-                rooms[index] = data.data;
-                renderRooms();
-            }
-        })
-        .then(() => closeRoomModal())
-        .catch(error => console.error('Failed to update room: ', error.message));
+    Put('/api/room/update/' + roomId, data, async room => {
+        alert('Successfully updated: ' + room.data.name);
+        const index = rooms.findIndex(r => r.id === room.data.id);
+        if (index !== -1) {
+            rooms[index] = room.data;
+            renderRooms();
+        }
+        closeRoomModal();
+    });
 }
 
 ///////////////////// Delete room /////////////////////
 function deleteRoom(room) {
     const token = getToken();
 
-    if (notAdmin()) {
+    if (notAdmin(userRole)) {
         alert('You are not allowed to delete rooms.');
         return;
     }
@@ -325,28 +260,14 @@ function deleteRoom(room) {
         return;
     }
 
-    fetch('/api/room/delete/' + room.id, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json'
+    Delete('/api/room/delete/' + room.id, async data => {
+        alert('Successfully deleted room');
+        const index = rooms.findIndex(r => r.id === room.id);
+        if (index !== -1) {
+            rooms.splice(index, 1);
+            renderRooms();
         }
-    })
-        .then(async response => {
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                console.error(errorData.message || `Request failed with status ${response.status}`);
-                return;
-            }
-
-            alert('Successfully deleted room');
-            const index = rooms.findIndex(r => r.id === room.id);
-            if (index !== -1) {
-                rooms.splice(index, 1);
-                renderRooms();
-            }
-        })
-        .catch(error => console.error('Delete failed:', error.message));
+    });
 }
 
 ///////////////////// Add group /////////////////////
@@ -362,7 +283,7 @@ function closeAddGroup() {
 }
 
 function submitAddGroup() {
-    if (notAdmin()) {
+    if (notAdmin(userRole)) {
         alert('You are not allowed to create groups.');
         return;
     }
@@ -373,40 +294,23 @@ function submitAddGroup() {
         return;
     }
 
-    const roomIds = Array.from(document.getElementById('rooms-to-group-add').elements['room'])
-        .filter(input => input.checked)
-        .map(input => input.dataset.id);
+    const data = {
+        name: groupName,
+        room_ids: Array.from(document.getElementById('rooms-to-group-add').elements['room'])
+            .filter(input => input.checked)
+            .map(input => input.dataset.id),
+    };
 
-    fetch('/api/group/createGroup', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            name: groupName,
-            room_ids: roomIds,
-        })
-    })
-        .then(async response => {
-            const data = await response.json().catch(() => ({}));
-
-            if (!response.ok) {
-                console.error(data.message || `Request failed with status ${response.status}`);
-                return;
-            }
-
-            alert('Successfully created group: ' + data.name);
-            groups.push({
-                id: data.id,
-                name: data.name,
-                roomIds: data.rooms.map(room => room.id)
-            });
-            renderGroups();
-        })
-        .then(() => closeAddGroup())
-        .catch(error => console.error('Failed to create group: ', error.message));
+    Post('/api/group/createGroup', data, async group => {
+        alert('Successfully created group: ' + group.name);
+        groups.push({
+            id: group.id,
+            name: group.name,
+            roomIds: group.rooms.map(room => room.id)
+        });
+        renderGroups();
+        closeAddGroup();
+    });
 }
 
 ///////////////////// Edit group /////////////////////
@@ -423,7 +327,7 @@ function closeGroupEdit() {
 }
 
 function submitGroupEdit() {
-    if (notAdmin()) {
+    if (notAdmin(userRole)) {
         alert('You are not allowed to edit groups.');
         return;
     }
@@ -436,35 +340,19 @@ function submitGroupEdit() {
         return;
     }
 
-    fetch('/api/group/updateGroupName/' + group.id, {
-        method: 'PUT',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            name: newName,
-        })
-    })
-        .then(async response => {
-            const data = await response.json().catch(() => ({}));
+    const data = {
+        name: newName,
+    }
+    Put('/api/group/updateGroupName/' + group.id, data, async group => {
+        alert('Successfully renamed group to ' + group.name);
 
-            if (!response.ok) {
-                console.error(data.message || `Request failed with status ${response.status}`);
-                return;
-            }
-
-            alert('Successfully renamed group to ' + data.name);
-
-            const index = groups.findIndex(g => g.id === data.id);
-            if (index !== -1) {
-                groups[index].name = data.name;
-                renderGroups();
-            }
-        })
-        .then(() => closeGroupEdit())
-        .catch(error => console.error('Failed to add room to the group: ', error.message));
+        const index = groups.findIndex(g => g.id === group.id);
+        if (index !== -1) {
+            groups[index].name = group.name;
+            renderGroups();
+        }
+        closeGroupEdit();
+    });
 }
 
 ///////////////////// Add room to group /////////////////////
@@ -492,45 +380,27 @@ function closeAddRoomToGroup() {
 }
 
 function submitAddRoomToGroup() {
-    if (notAdmin()) {
+    if (notAdmin(userRole)) {
         alert('You are not allowed to add rooms to groups.');
         return;
     }
 
     const group = window.groupAddNewRooms;
-    const roomIds = Array.from(document.getElementById('add-rooms-to-group').elements['room'])
-        .filter(input => input.checked)
-        .map(input => input.dataset.id);
+    const data = {
+        room_ids: Array.from(document.getElementById('add-rooms-to-group').elements['room'])
+            .filter(input => input.checked)
+            .map(input => input.dataset.id)
+    };
 
-    fetch('/api/group/addRoomsToGroup/' + group.id, {
-        method: 'PUT',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            room_ids: roomIds,
-        })
-    })
-        .then(async response => {
-            const data = await response.json().catch(() => ({}));
-
-            if (!response.ok) {
-                console.error(data.message || `Request failed with status ${response.status}`);
-                return;
-            }
-
-            alert('Successfully added rooms');
-
-            const index = groups.findIndex(g => g.id === data.id);
-            if (index !== -1) {
-                groups[index].roomIds = data.rooms.map(room => room.id);
-                renderGroups();
-            }
-        })
-        .then(() => closeAddRoomToGroup())
-        .catch(error => console.error('Failed to add room to the group: ', error.message));
+    Put('/api/group/addRoomsToGroup/' + group.id, data, async group => {
+        alert('Successfully added rooms');
+        const index = groups.findIndex(g => g.id === group.id);
+        if (index !== -1) {
+            groups[index].roomIds = group.rooms.map(room => room.id);
+            renderGroups();
+        }
+        closeAddRoomToGroup();
+    });
 }
 
 ///////////////////// Remove rooms from group /////////////////////
@@ -558,52 +428,38 @@ function closeRemoveRoomsFromGroup() {
 }
 
 function submitRemoveRoomsFromGroup() {
-    if (notAdmin()) {
+    if (notAdmin(userRole)) {
         alert('You are not allowed to remove rooms from groups.');
         return;
     }
 
     const group = window.groupRemoveRooms;
-    const roomIds = Array.from(document.getElementById('remove-rooms-from-group').elements['room'])
-        .filter(input => input.checked)
-        .map(input => input.dataset.id);
+    // const roomIds = Array.from(document.getElementById('remove-rooms-from-group').elements['room'])
+    //     .filter(input => input.checked)
+    //     .map(input => input.dataset.id);
 
-    fetch('/api/group/removeRoomsFromGroup/' + group.id, {
-        method: 'PUT',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            room_ids: roomIds,
-        })
-    })
-        .then(async response => {
-            const data = await response.json().catch(() => ({}));
+    const data = {
+        room_ids: Array.from(document.getElementById('remove-rooms-from-group').elements['room'])
+            .filter(input => input.checked)
+            .map(input => input.dataset.id),
+    };
 
-            if (!response.ok) {
-                console.error(data.message || `Request failed with status ${response.status}`);
-                return;
-            }
-
-            alert('Successfully removed rooms');
-
-            const index = groups.findIndex(g => g.id === group.id);
-            if (index !== -1) {
-                groups[index].roomIds = group.roomIds.filter(i => !roomIds.includes(String(i)));
-                renderGroups();
-            }
-        })
-        .then(() => closeRemoveRoomsFromGroup())
-        .catch(error => console.error('Failed to remove room(s) from the group: ', error.message));
+    Put('/api/group/removeRoomsFromGroup/' + group.id, data, async message => {
+        alert('Successfully removed rooms');
+        const index = groups.findIndex(g => g.id === group.id);
+        if (index !== -1) {
+            groups[index].roomIds = group.roomIds.filter(i => !data.room_ids.includes(String(i)));
+            renderGroups();
+        }
+        closeRemoveRoomsFromGroup();
+    });
 }
 
 ///////////////////// Group deletion /////////////////////
 function deleteGroup(group) {
     const token = getToken();
 
-    if (notAdmin()) {
+    if (notAdmin(userRole)) {
         alert('You are not allowed to delete groups.');
         return;
     }
@@ -613,28 +469,14 @@ function deleteGroup(group) {
         return;
     }
 
-    fetch('/api/group/deleteGroup/' + group.id, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json'
+    Delete('/api/group/deleteGroup/' + group.id, async data => {
+        alert('Successfully deleted group');
+        const index = groups.findIndex(g => g.id === group.id);
+        if (index !== -1) {
+            groups.splice(index, 1);
+            renderGroups();
         }
-    })
-        .then(async response => {
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                console.error(errorData.message || `Request failed with status ${response.status}`);
-                return;
-            }
-
-            alert('Successfully deleted group');
-            const index = groups.findIndex(g => g.id === group.id);
-            if (index !== -1) {
-                groups.splice(index, 1);
-                renderGroups();
-            }
-        })
-        .catch(error => console.error('Delete failed:', error.message));
+    });
 }
 
 fetchUserole();
