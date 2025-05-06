@@ -54,3 +54,8 @@
 - Changed login to not logout existing user sessions.
 - Refactored booking ordering in app view.
 - Fixed minor issue with logout failing.
+
+## 06-05-2025
+
+- Created system admin user migration.
+- Started work on profile page.
