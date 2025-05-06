@@ -67,14 +67,12 @@ function renderRooms() {
     const grid = document.getElementById('roomGrid');
     const cardTemplate = document.getElementById('room-card-template');
     const addGroupModal = document.getElementById('rooms-to-group-add');
-    const addRoomToGroupModal = document.getElementById('add-rooms-to-group');
-    const removeRoomFromGroupModal = document.getElementById('remove-rooms-from-group');
+    const roomToGroupModal = document.getElementById('rooms-to-group');
 
     // Clear to not have dubble
     grid.innerHTML = '';
     addGroupModal.innerHTML = '';
-    addRoomToGroupModal.innerHTML = '';
-    removeRoomFromGroupModal.innerHTML = '';
+    roomToGroupModal.innerHTML = '';
 
     grid.appendChild(cardTemplate); // Save the template again
 
@@ -96,11 +94,8 @@ function renderRooms() {
             addGroupModal.appendChild(createRoomCheckbox(room));
             addGroupModal.appendChild(document.createElement("br"));
 
-            addRoomToGroupModal.appendChild(createRoomCheckbox(room));
-            addRoomToGroupModal.appendChild(document.createElement("br"));
-
-            removeRoomFromGroupModal.appendChild(createRoomCheckbox(room));
-            removeRoomFromGroupModal.appendChild(document.createElement("br"));
+            roomToGroupModal.appendChild(createRoomCheckbox(room));
+            roomToGroupModal.appendChild(document.createElement("br"));
         }
 
         grid.appendChild(card);
@@ -355,41 +350,59 @@ function submitGroupEdit() {
     });
 }
 
-///////////////////// Add room to group /////////////////////
+///////////////////// Group add/remove rooms /////////////////////
 
-function openAddRoomToGroup(group) {
-    Array.from(document.getElementById('add-rooms-to-group').elements['room'])
+function openRoomToGroup(group, action, add) {
+    document.getElementById('room-to-group-title').innerText = action + ' rooms:';
+    document.getElementById('rooms-to-group-btn').innerText = action;
+    Array.from(document.getElementById('rooms-to-group').elements['room'])
         .forEach(i => {
-            if (group.roomIds.includes(parseInt(i.dataset.id))) {
+            if (group.roomIds.includes(parseInt(i.dataset.id)) == add) {
                 i.style.display = 'none';
             }
+            else {
+                i.style.display = '';
+            }
         })
-
-    window.groupAddNewRooms = group;
-    document.getElementById('add-room-to-group-modal').style.display = '';
+    document.getElementById('room-to-group-modal').style.display = '';
 }
 
-function closeAddRoomToGroup() {
-    window.groupAddNewRooms = null;
-    document.getElementById('add-room-to-group-modal').style.display = 'none';
-    Array.from(document.getElementById('add-rooms-to-group').elements['room'])
+function closeRoomToGroup() {
+    document.getElementById('room-to-group-modal').style.display = 'none';
+    Array.from(document.getElementById('rooms-to-group').elements['room'])
         .forEach(i => {
             i.checked = false;
-            i.style.display = '';
         });
 }
 
-function submitAddRoomToGroup() {
+function submitRoomToGroup() {
+    if (window.roomToGroupFunction) {
+        window.roomToGroupFunction(
+            Array.from(document.getElementById('rooms-to-group').elements['room'])
+                .filter(input => input.checked)
+                .map(input => input.dataset.id));
+        window.roomToGroupFunction = null;
+    }
+}
+
+///////////////////// Add room to group /////////////////////
+
+function openAddRoomToGroup(group) {
+    window.groupAddNewRooms = group;
+    window.roomToGroupFunction = submitAddRoomToGroup;
+    openRoomToGroup(group, 'Add', true);
+}
+
+function submitAddRoomToGroup(roomIds) {
     if (notAdmin(userRole)) {
         alert('You are not allowed to add rooms to groups.');
         return;
     }
 
     const group = window.groupAddNewRooms;
+    window.groupAddNewRooms = null;
     const data = {
-        room_ids: Array.from(document.getElementById('add-rooms-to-group').elements['room'])
-            .filter(input => input.checked)
-            .map(input => input.dataset.id)
+        room_ids: roomIds
     };
 
     Put('/api/group/addRoomsToGroup/' + group.id, data, async group => {
@@ -399,49 +412,28 @@ function submitAddRoomToGroup() {
             groups[index].roomIds = group.rooms.map(room => room.id);
             renderGroups();
         }
-        closeAddRoomToGroup();
+        closeRoomToGroup();
     });
 }
 
 ///////////////////// Remove rooms from group /////////////////////
 
 function openRemoveRoomsFromGroup(group) {
-    Array.from(document.getElementById('remove-rooms-from-group').elements['room'])
-        .forEach(i => {
-            if (!group.roomIds.includes(parseInt(i.dataset.id))) {
-                i.style.display = 'none';
-            }
-        })
-
     window.groupRemoveRooms = group;
-    document.getElementById('remove-room-from-group-modal').style.display = '';
+    window.roomToGroupFunction = submitRemoveRoomsFromGroup;
+    openRoomToGroup(group, 'Remove', false);
 }
 
-function closeRemoveRoomsFromGroup() {
-    window.groupRemoveRooms = null;
-    document.getElementById('remove-room-from-group-modal').style.display = 'none';
-    Array.from(document.getElementById('remove-rooms-from-group').elements['room'])
-        .forEach(i => {
-            i.checked = false;
-            i.style.display = '';
-        });
-}
-
-function submitRemoveRoomsFromGroup() {
+function submitRemoveRoomsFromGroup(roomIds) {
     if (notAdmin(userRole)) {
         alert('You are not allowed to remove rooms from groups.');
         return;
     }
 
     const group = window.groupRemoveRooms;
-    // const roomIds = Array.from(document.getElementById('remove-rooms-from-group').elements['room'])
-    //     .filter(input => input.checked)
-    //     .map(input => input.dataset.id);
-
+    window.groupRemoveRooms = null;
     const data = {
-        room_ids: Array.from(document.getElementById('remove-rooms-from-group').elements['room'])
-            .filter(input => input.checked)
-            .map(input => input.dataset.id),
+        room_ids: roomIds
     };
 
     Put('/api/group/removeRoomsFromGroup/' + group.id, data, async message => {
@@ -451,7 +443,7 @@ function submitRemoveRoomsFromGroup() {
             groups[index].roomIds = group.roomIds.filter(i => !data.room_ids.includes(String(i)));
             renderGroups();
         }
-        closeRemoveRoomsFromGroup();
+        closeRoomToGroup();
     });
 }
 
