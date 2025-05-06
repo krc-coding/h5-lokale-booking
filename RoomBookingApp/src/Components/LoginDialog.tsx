@@ -34,6 +34,7 @@ const LoginDialog = (props: ILoginDialog) => {
             resourceManager.setAuthTokenHeader(response.data.token);
             window.api.saveAuthToken(response.data.token);
             props.setIsAuthed(true);
+            document.body.dataset["user"] = JSON.stringify(response.data.user);
         }).catch((error) => {
             setErrorMessage(error.response.data.error_message);
         });
