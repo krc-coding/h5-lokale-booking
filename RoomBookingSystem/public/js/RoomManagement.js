@@ -199,7 +199,7 @@ function submitRoomModal() {
         return;
     }
 
-    if (name === '' || roomNumber === '' || maxPeople === '' || description === '') {
+    if (name === '' || roomNumber === '' || maxPeople === '') {
         alert('One or more of the fields are empty');
         return;
     }
@@ -259,9 +259,6 @@ function submitAddRoom(name, roomNumber, maxPeople, description) {
 ///////////////////// Edit room /////////////////////
 
 function openRoomEdit(room) {
-    console.log(room);
-    console.log(room.maxPeople);
-
     document.getElementById('room-name').value = room.name;
     document.getElementById('room-number').value = room.room_number;
     document.getElementById('room-max-people').value = room.max_people;
