@@ -22,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rooms_groups');
+        Schema::dropIfExists('group_room');
     }
 };

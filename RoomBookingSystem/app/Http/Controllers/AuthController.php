@@ -21,7 +21,6 @@ class AuthController extends Controller
         }
 
         $user = auth()->user();
-        $this->logout();
 
         $token = $user->createToken('API Token')->accessToken;
 

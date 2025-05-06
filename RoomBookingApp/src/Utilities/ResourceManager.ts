@@ -15,7 +15,7 @@ class ResourceManager {
     makeRequest = (path: string, method: Method, body?: BodyInit, extraOptions: AxiosRequestConfig = {}): RequestHandler => {
         let options: AxiosRequestConfig = {
             method: method,
-            headers: this.headers,
+            headers: { ...this.headers, ...extraOptions.headers },
             url: this.baseUrl + path,
         }
 

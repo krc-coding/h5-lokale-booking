@@ -59,3 +59,15 @@ Route::prefix('/group')->group(function () {
         Route::delete('/deleteGroup/{group}', [GroupController::class, 'deleteGroup']);
     });
 });
+
+Route::prefix('/bookingRequest')->group(function () {
+    Route::get('/{bookingRequest}', [BookingController::class, 'getSingle']);
+    Route::post('/create', [BookingController::class, 'create']);
+    
+    Route::middleware('auth:api')->group(function () {
+        Route::get('', [BookingController::class, 'getAll']);
+        Route::put('/update/{bookingRequest}', [BookingController::class, 'update']);
+        Route::delete('delete/{bookingRequest}', [BookingController::class, 'delete']);
+        Route::get('/received', [BookingController::class, 'myReceivedRequests']);
+    });
+});

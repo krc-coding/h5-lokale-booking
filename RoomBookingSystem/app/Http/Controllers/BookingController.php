@@ -34,7 +34,7 @@ class BookingController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string',
-            'description' => 'string',
+            'description' => 'nullable|string',
             'start_time' => 'required|date',
             'end_time' => 'nullable|date|after_or_equal:start_time',
             'room_id' => 'required|exists:rooms,id'

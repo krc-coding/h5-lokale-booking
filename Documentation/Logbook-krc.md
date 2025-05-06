@@ -36,3 +36,21 @@
 ## 30-04-2025
 
 - Finished work on initla room booking overview page. 
+
+## 01-05-2025
+
+- Created login dialog.
+- Created multi page setup.
+- Started working on a IPC controller.
+
+## 02-05-2025
+
+- Finished creating IPC controller.
+- Setup auto login on startup.
+
+## 05-05-2025
+
+- Created Booking dialog.
+- Changed login to not logout existing user sessions.
+- Refactored booking ordering in app view.
+- Fixed minor issue with logout failing.
