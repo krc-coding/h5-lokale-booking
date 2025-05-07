@@ -152,6 +152,7 @@ function renderGroups() {
 ///////////////////// Room modal functions /////////////////////
 
 function closeRoomModal() {
+    window.submitRoomModalFunction = null;
     document.getElementById('room-modal').style.display = 'none';
     document.getElementById('room-name').value = '';
     document.getElementById('room-number').value = '';
@@ -167,6 +168,7 @@ function submitRoomModal() {
 
     if (notAdmin(userRole)) {
         alert('You are not allowed to ' + window.roomModalAction + ' rooms');
+        window.roomModalAction = null;
         return;
     }
 
@@ -177,7 +179,6 @@ function submitRoomModal() {
 
     if (window.submitRoomModalFunction) {
         window.submitRoomModalFunction(name, roomNumber, maxPeople, description);
-        window.submitRoomModalFunction = null;
     }
 }
 
@@ -375,6 +376,7 @@ function openRoomToGroup(group, action, add) {
 }
 
 function closeRoomToGroup() {
+    window.roomToGroupFunction = null;
     document.getElementById('room-to-group-modal').style.display = 'none';
     Array.from(getArrayOfRoomCheckboxForm('rooms-to-group'))
         .forEach(i => {
@@ -388,8 +390,6 @@ function submitRoomToGroup() {
             Array.from(getArrayOfRoomCheckboxForm('rooms-to-group'))
                 .filter(input => input.checked)
                 .map(input => input.dataset.id));
-
-        window.roomToGroupFunction = null;
     }
 }
 
