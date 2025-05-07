@@ -48,7 +48,7 @@ class RoomController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'string|max:255',
+            'description' => 'nullable|string|max:255',
             'room_number' => 'required|string|max:255',
             'max_people' => 'required|integer',
         ]);
