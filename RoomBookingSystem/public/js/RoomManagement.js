@@ -255,8 +255,6 @@ function submitRoomEdit(name, roomNumber, maxPeople, description) {
 
 ///////////////////// Delete room /////////////////////
 function deleteRoom(room) {
-    const token = getToken();
-
     if (notAdmin(userRole)) {
         alert('You are not allowed to delete rooms.');
         return;
@@ -457,8 +455,6 @@ function submitRemoveRoomsFromGroup(roomIds) {
 
 ///////////////////// Group deletion /////////////////////
 function deleteGroup(group) {
-    const token = getToken();
-
     if (notAdmin(userRole)) {
         alert('You are not allowed to delete groups.');
         return;
