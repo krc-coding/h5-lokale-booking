@@ -2,6 +2,17 @@ const rooms = [];
 const groups = [];
 let userRole = 'nothing';
 
+function getArrayOfRoomCheckboxForm(formId) {
+    const roomForm = document.getElementById(formId);
+    const roomsRaw = roomForm.elements['room'];
+
+    return Array.isArray(roomsRaw)
+        ? roomsRaw
+        : roomsRaw.length !== undefined
+            ? Array.from(roomsRaw)
+            : [roomsRaw];
+}
+
 function updateButtons() {
     if (!notAdmin(userRole)) {
         // Remove the local styling: display.
@@ -274,7 +285,7 @@ function openAddGroup() {
 function closeAddGroup() {
     document.getElementById('add-group').style.display = 'none';
     document.getElementById('group-add-name-input').value = '';
-    Array.from(document.getElementById('rooms-to-group-add').elements['room']).forEach(i => i.checked = false);
+    getArrayOfRoomCheckboxForm('rooms-to-group-add').forEach(i => i.checked = false); // Uncheck all checkboxes 
 }
 
 function submitAddGroup() {
@@ -291,7 +302,7 @@ function submitAddGroup() {
 
     const data = {
         name: groupName,
-        room_ids: Array.from(document.getElementById('rooms-to-group-add').elements['room'])
+        room_ids: Array.from(getArrayOfRoomCheckboxForm('rooms-to-group-add'))
             .filter(input => input.checked)
             .map(input => input.dataset.id),
     };
@@ -355,21 +366,17 @@ function submitGroupEdit() {
 function openRoomToGroup(group, action, add) {
     document.getElementById('room-to-group-title').innerText = action + ' rooms:';
     document.getElementById('rooms-to-group-btn').innerText = action;
-    Array.from(document.getElementById('rooms-to-group').elements['room'])
+    Array.from(getArrayOfRoomCheckboxForm('rooms-to-group'))
         .forEach(i => {
-            if (group.roomIds.includes(parseInt(i.dataset.id)) == add) {
-                i.style.display = 'none';
-            }
-            else {
-                i.style.display = '';
-            }
-        })
+            i.style.display = group.roomIds.includes(parseInt(i.dataset.id)) === add ? 'none' : '';
+        });
+
     document.getElementById('room-to-group-modal').style.display = '';
 }
 
 function closeRoomToGroup() {
     document.getElementById('room-to-group-modal').style.display = 'none';
-    Array.from(document.getElementById('rooms-to-group').elements['room'])
+    Array.from(getArrayOfRoomCheckboxForm('rooms-to-group'))
         .forEach(i => {
             i.checked = false;
         });
@@ -378,9 +385,10 @@ function closeRoomToGroup() {
 function submitRoomToGroup() {
     if (window.roomToGroupFunction) {
         window.roomToGroupFunction(
-            Array.from(document.getElementById('rooms-to-group').elements['room'])
+            Array.from(getArrayOfRoomCheckboxForm('rooms-to-group'))
                 .filter(input => input.checked)
                 .map(input => input.dataset.id));
+
         window.roomToGroupFunction = null;
     }
 }
