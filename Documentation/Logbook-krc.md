@@ -59,3 +59,13 @@
 
 - Created system admin user migration.
 - Created simple profile page.
+
+## 07-05-2025
+
+- Started working on admin page.
+- Had some troubles with focus, so didn't get much done.
+
+## 08-05-2025
+
+- Created user management section on admin page.
+- Removed left over code in password dialog.
