@@ -33,9 +33,6 @@ const ChangePasswordDialog = (props: IChangePasswordDialog) => {
         const request = resourceManager.makeRequest("/api/user/changePassword/" + props.user.id, "PUT", JSON.stringify(formJson), { headers: { "Content-Type": "application/json" } });
         request.getResponse().then((response) => {
             handleCloseDialog();
-            // resourceManager.setAuthTokenHeader(response.data.token);
-            // window.api.saveAuthToken(response.data.token);
-            // document.body.dataset["user"] = JSON.stringify(response.data.user);
         }).catch((error) => {
             setErrorMessage(error.response.data.error_message);
         });
