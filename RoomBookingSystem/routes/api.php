@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\BookingRequestController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GroupController;
@@ -10,8 +11,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
 
-Route::middleware('auth:api')->group(function () {
-    Route::prefix('/user')->group(function () {
+Route::prefix('/user')->group(function () {
+    Route::get('/teachers', [UserController::class, 'getAllTeachers']);
+    
+    Route::middleware('auth:api')->group(function () {
         Route::post('/createUser', [UserController::class, 'createUser']);
         Route::get('/getUser/{user}', [UserController::class, 'getUser']);
         Route::get('/getAllUsers', [UserController::class, 'getAllUsers']);
@@ -61,13 +64,13 @@ Route::prefix('/group')->group(function () {
 });
 
 Route::prefix('/bookingRequest')->group(function () {
-    Route::get('/{bookingRequest}', [BookingController::class, 'getSingle']);
-    Route::post('/create', [BookingController::class, 'create']);
+    Route::get('/{bookingRequest}', [BookingRequestController::class, 'getSingle']);
+    Route::post('/create', [BookingRequestController::class, 'create']);
     
     Route::middleware('auth:api')->group(function () {
-        Route::get('', [BookingController::class, 'getAll']);
-        Route::put('/update/{bookingRequest}', [BookingController::class, 'update']);
-        Route::delete('delete/{bookingRequest}', [BookingController::class, 'delete']);
-        Route::get('/received', [BookingController::class, 'myReceivedRequests']);
+        Route::get('', [BookingRequestController::class, 'getAll']);
+        Route::put('/update/{bookingRequest}', [BookingRequestController::class, 'update']);
+        Route::delete('delete/{bookingRequest}', [BookingRequestController::class, 'delete']);
+        Route::get('/received', [BookingRequestController::class, 'myReceivedRequests']);
     });
 });
