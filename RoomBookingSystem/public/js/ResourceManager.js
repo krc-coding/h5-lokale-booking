@@ -33,12 +33,13 @@ function Get(path, onSuccess) {
         .then(async response => {
             const data = await response.json().catch(() => ({}));
             if (!response.ok) {
+                alert(data.message || `Request failed with status ${response.status}`);
                 console.error(data.message || `Request failed with status ${response.status}`);
                 return;
             }
             await onSuccess(data)
         })
-        .catch(error => console.error('Failed to get:', error));
+        .catch(error => alert('Something went wrong: ', error));
 }
 
 function Post(path, data, onSuccess) {
@@ -46,13 +47,14 @@ function Post(path, data, onSuccess) {
         .then(async response => {
             const data = await response.json().catch(() => ({}));
             if (!response.ok) {
+                alert(data.message || `Request failed with status ${response.status}`);
                 console.error(data.message || `Request failed with status ${response.status}`);
                 return;
             }
 
             await onSuccess(data);
         })
-        .catch(error => console.error('Failed to create: ', error.message));
+        .catch(error => alert('Something went wrong: ', error.message));
 }
 
 function Put(path, data, onSuccess) {
@@ -60,13 +62,14 @@ function Put(path, data, onSuccess) {
         .then(async response => {
             const data = await response.json().catch(() => ({}));
             if (!response.ok) {
+                alert(data.message || `Request failed with status ${response.status}`);
                 console.error(data.message || `Request failed with status ${response.status}`);
                 return;
             }
 
             await onSuccess(data);
         })
-        .catch(error => console.error('Failed to update: ', error.message));
+        .catch(error => alert('Something went wrong: ', error.message));
 }
 
 function Delete(path, onSuccess) {
@@ -74,11 +77,12 @@ function Delete(path, onSuccess) {
         .then(async response => {
             const data = await response.json().catch(() => ({}));
             if (!response.ok) {
+                alert(data.message || `Request failed with status ${response.status}`);
                 console.error(data.message || `Request failed with status ${response.status}`);
                 return;
             }
 
             await onSuccess(data);
         })
-        .catch(error => console.error('Delete failed: ', error.message));
+        .catch(error => alert('Something went wrong: ', error.message));
 }

@@ -101,6 +101,10 @@ class RoomController extends Controller
             return response()->json(["message" => "Unauthorized"], 401);
         }
 
+        if ($room->bookings()->exists()) {
+            return response()->json(['message' => 'Room still has booking'], 409);
+        }
+
         $room->delete();
         return response()->json([], 204);
     }
