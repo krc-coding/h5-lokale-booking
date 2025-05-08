@@ -14,7 +14,7 @@ class UserController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->role !== 'admin') {
+        if ($user->role !== 'admin' && $user->role !== 'systemAdmin') {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
@@ -49,7 +49,7 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'username' => 'required|string|max:255',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6',
             'role' => 'required|string|in:teacher,admin,',
         ]);
 
