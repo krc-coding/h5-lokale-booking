@@ -33,7 +33,7 @@ class BookingRequestController extends Controller
 
         $bookingRequest = BookingRequest::create($validated);
 
-        return response()->json($bookingRequest, 201);
+        return response()->json(['status' => 'ok'], 200);
     }
 
     public function myReceivedRequests(Request $request)

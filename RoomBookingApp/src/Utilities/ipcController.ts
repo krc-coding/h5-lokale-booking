@@ -33,6 +33,9 @@ ipcMain.handle("authToken", (event: Electron.IpcMainEvent, args: { command: "get
 ipcMain.on("authToken", (event: Electron.IpcMainEvent, args: { command: "get" | "save" | "delete"; token?: string; }) => {
     if (args.command === "save") {
         if (args.token) {
+            if (fs.existsSync(dataPath + "/authToken.json")) {
+                fs.unlinkSync(dataPath + "/authToken.json");
+            }
             fs.writeFileSync(dataPath + "/authToken.json", JSON.stringify({ authToken: args.token }));
         }
         event.reply("authToken", { command: "save", status: "success" });
