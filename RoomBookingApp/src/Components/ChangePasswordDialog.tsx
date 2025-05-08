@@ -6,12 +6,13 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import resourceManager from "../Utilities/ResourceManager";
+import { IUser } from "../types/IUser";
 
-interface ILoginDialog {
-    setIsAuthed: React.Dispatch<React.SetStateAction<boolean>>;
+interface IChangePasswordDialog {
+    user?: IUser;
 }
 
-const LoginDialog = (props: ILoginDialog) => {
+const ChangePasswordDialog = (props: IChangePasswordDialog) => {
     const [open, setOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -25,16 +26,16 @@ const LoginDialog = (props: ILoginDialog) => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if (!props.user) return;
         setErrorMessage("");
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries((formData as any).entries());
-        const request = resourceManager.makeRequest("/api/login", "POST", JSON.stringify(formJson), { headers: { "Content-Type": "application/json" } });
+        const request = resourceManager.makeRequest("/api/user/changePassword/" + props.user.id, "PUT", JSON.stringify(formJson), { headers: { "Content-Type": "application/json" } });
         request.getResponse().then((response) => {
             handleCloseDialog();
-            resourceManager.setAuthTokenHeader(response.data.token);
-            window.api.saveAuthToken(response.data.token);
-            props.setIsAuthed(true);
-            document.body.dataset["user"] = JSON.stringify(response.data.user);
+            // resourceManager.setAuthTokenHeader(response.data.token);
+            // window.api.saveAuthToken(response.data.token);
+            // document.body.dataset["user"] = JSON.stringify(response.data.user);
         }).catch((error) => {
             setErrorMessage(error.response.data.error_message);
         });
@@ -42,12 +43,8 @@ const LoginDialog = (props: ILoginDialog) => {
 
     return (
         <React.Fragment>
-            <Button variant="contained" onClick={handleOpenDialog} sx={{
-                position: "absolute",
-                top: "1%",
-                right: "1%",
-            }}>
-                Login
+            <Button variant="contained" onClick={handleOpenDialog}>
+                Change password
             </Button>
             <Dialog
                 open={open}
@@ -59,24 +56,31 @@ const LoginDialog = (props: ILoginDialog) => {
                     },
                 }}
             >
-                <DialogTitle>Login</DialogTitle>
+                <DialogTitle>Change password</DialogTitle>
                 <DialogContent>
                     <TextField
                         required
                         margin="dense"
-                        id="username"
-                        name="username"
-                        label="User name"
-                        type="text"
+                        name="oldPassword"
+                        label="Old password"
+                        type="password"
                         fullWidth
                         variant="standard"
                     />
                     <TextField
                         required
                         margin="dense"
-                        id="password"
                         name="password"
-                        label="Password"
+                        label="New password"
+                        type="password"
+                        fullWidth
+                        variant="standard"
+                    />
+                    <TextField
+                        required
+                        margin="dense"
+                        name="password_confirmation"
+                        label="New password (repeat)"
                         type="password"
                         fullWidth
                         variant="standard"
@@ -85,11 +89,11 @@ const LoginDialog = (props: ILoginDialog) => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog}>Cancel</Button>
-                    <Button type="submit">Login</Button>
+                    <Button type="submit">Update</Button>
                 </DialogActions>
             </Dialog>
         </React.Fragment>
     );
 }
 
-export default LoginDialog;
+export default ChangePasswordDialog;

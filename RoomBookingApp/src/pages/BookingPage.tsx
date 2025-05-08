@@ -165,7 +165,7 @@ const BookingPage = () => {
     }
 
     return (
-        <Box sx={{ height: "100%", width: "100%", backgroundColor: "white" }}>
+        <Box sx={{ height: "100%", width: "100%" }}>
             <CreateBookingDialog rooms={rooms} />
             <Table stickyHeader size="small" sx={{ height: "fit-content" }}>
                 <TableHead>
