@@ -69,3 +69,4 @@
 
 - Created user management section on admin page.
 - Removed left over code in password dialog.
+- Started work on room management section in admin page.
