@@ -84,3 +84,12 @@ h1 {
     background-color: #0056b3;
     border-color: #0056b3;
 }
+
+.btn-logout {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-logout:hover {
+    background-color: #b02a37;
+}

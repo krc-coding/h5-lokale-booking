@@ -11,3 +11,6 @@ Route::get('RoomGroupManagement', function () {
     return view('RoomManagement');
 });
 Route::get('/rooms/{id}', [RoomController::class, 'showRoom']);
+Route::get('bookingRequests', function () {
+    return view('bookingRequests');
+});

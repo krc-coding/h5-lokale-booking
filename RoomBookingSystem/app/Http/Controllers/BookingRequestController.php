@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookingRequest;
-use Carbon\Carbon;
+use App\Models\Booking;
+use App\Http\Controllers\BookingController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class BookingRequestController extends Controller
 {
@@ -36,12 +38,58 @@ class BookingRequestController extends Controller
         return response()->json(['status' => 'ok'], 200);
     }
 
-    public function myReceivedRequests(Request $request)
+    public function approve(Request $request, BookingRequest $bookingRequest)
+    {
+        $user = auth()->user();
+    
+        if ($user->id !== $bookingRequest->user_id && $user->role !== 'admin') {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+    
+        $start = $bookingRequest->start_time;
+        $end = $bookingRequest->end_time ?? Carbon::parse($start)->endOfDay();
+    
+        // Check for overlap
+        $overlap = Booking::where('room_id', $bookingRequest->room_id)
+            ->where(function ($query) use ($start, $end) {
+                $query->whereBetween('start_time', [$start, $end])
+                    ->orWhereBetween('end_time', [$start, $end])
+                    ->orWhere(function ($query) use ($start, $end) {
+                        $query->where('start_time', '<=', $start)
+                              ->where('end_time', '>=', $end);
+                    });
+            })
+            ->exists();
+        
+        if ($overlap) {
+            return response()->json(['message' => 'This time slot is already booked.'], 400);
+        }
+    
+        // Create the booking
+        $booking = new Booking([
+            'title' => $bookingRequest->title,
+            'description' => $bookingRequest->description,
+            'start_time' => $start,
+            'end_time' => $end,
+            'room_id' => $bookingRequest->room_id,
+        ]);
+        $booking->user_id = $user->id;
+        $booking->save();
+    
+        $bookingRequest->delete();
+    
+        return response()->json(['message' => 'Booking approved.']);
+    }
+
+
+
+    public function myReceivedRequests()
     {
         $user = auth()->user();
 
         $bookingRequests = BookingRequest::with(['room'])
             ->where('user_id', $user->id)
+            ->where('end_time', '>', now())
             ->get();
 
         return response()->json($bookingRequests);

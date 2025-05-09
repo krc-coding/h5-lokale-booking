@@ -64,13 +64,15 @@ Route::prefix('/group')->group(function () {
 });
 
 Route::prefix('/bookingRequest')->group(function () {
-    Route::get('/{bookingRequest}', [BookingRequestController::class, 'getSingle']);
     Route::post('/create', [BookingRequestController::class, 'create']);
     
     Route::middleware('auth:api')->group(function () {
         Route::get('', [BookingRequestController::class, 'getAll']);
-        Route::put('/update/{bookingRequest}', [BookingRequestController::class, 'update']);
-        Route::delete('delete/{bookingRequest}', [BookingRequestController::class, 'delete']);
         Route::get('/received', [BookingRequestController::class, 'myReceivedRequests']);
+        Route::post('/approve/{bookingRequest}', [BookingRequestController::class, 'approve']);
+        Route::put('/update/{bookingRequest}', [BookingRequestController::class, 'update']);
+        Route::delete('/delete/{bookingRequest}', [BookingRequestController::class, 'delete']);
     });
+    Route::get('/{bookingRequest}', [BookingRequestController::class, 'getSingle']);
 });
+

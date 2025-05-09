@@ -34,3 +34,15 @@
 
 ### 02-05-2025
 - finished making single room page
+
+### 05-05-2025
+- started making booking request possible
+
+### 06-05-2025
+- made booking request endpoints
+
+### 07-05-2025
+- meetings and continued making booking requests possible
+
+### 07-05-2025
+- started making booking request page
