@@ -44,5 +44,8 @@
 ### 07-05-2025
 - meetings and continued making booking requests possible
 
-### 07-05-2025
+### 08-05-2025
 - started making booking request page
+
+### 09-05-2025
+- finished making booking request page
