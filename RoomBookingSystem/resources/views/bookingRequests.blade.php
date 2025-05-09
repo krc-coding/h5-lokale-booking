@@ -33,13 +33,33 @@
     </div>
 
     <script>
+        function changePage(page) {
+            window.location.href = page;
+        }
         async function fetchBookingRequests() {
             const token = localStorage.getItem('authToken');
-            const res = await fetch('/api/bookingRequests', {
+            if (!token) return alert('You must be logged in.');
+
+            const userRes = await fetch('/api/user/getRole', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
+
+            const user = await userRes.json();
+            const isAdmin = user.role === 'admin';
+
+            const endpoint = isAdmin ?
+                '/api/bookingRequest' // For admins: all requests
+                :
+                '/api/bookingRequest/received'; // For teachers: assigned requests
+
+            const res = await fetch(endpoint, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
             const requests = await res.json();
 
             const grid = document.getElementById('requestsGrid');
@@ -48,39 +68,57 @@
             grid.innerHTML = '';
             requests.forEach(req => {
                 const clone = template.content.cloneNode(true);
+
                 clone.querySelector('.booking-title').textContent = req.title;
                 clone.querySelector('.student-name').textContent = req.student_name;
                 clone.querySelector('.booking-time').textContent = `${req.start_time} → ${req.end_time}`;
-                clone.querySelector('.booking-room').textContent = req.room.name;
+                clone.querySelector('.booking-room').textContent = req.room?.name ?? 'Unknown';
                 clone.querySelector('.booking-desc').textContent = req.description || '-';
 
-                clone.querySelector('.approve-btn').addEventListener('click', () => handleAction(req.id,
-                    'approve'));
-                clone.querySelector('.deny-btn').addEventListener('click', () => handleAction(req.id, 'deny'));
+                // Set up button actions
+                clone.querySelector('.approve-btn').addEventListener('click', () => handleAction('approve', req
+                    .id));
+                clone.querySelector('.deny-btn').addEventListener('click', () => handleAction('delete', req
+                .id));
 
                 grid.appendChild(clone);
             });
+
         }
 
-        async function handleAction(id, action) {
+        async function handleAction(action, id) {
             const token = localStorage.getItem('authToken');
-            const res = await fetch(`/api/bookingRequest/${id}/${action}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            const url = action === 'delete' ?
+                `/api/bookingRequest/delete/${id}` :
+                `/api/bookingRequest/approve/${id}`;
 
-            if (res.ok) {
-                alert(`Booking ${action}d successfully.`);
-                fetchBookingRequests();
-            } else {
-                alert(`Failed to ${action} booking.`);
+            const method = action === 'delete' ? 'DELETE' : 'POST';
+
+            try {
+                const res = await fetch(url, {
+                    method,
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (res.ok) {
+                    alert(`Booking ${action}d successfully.`);
+                    fetchBookingRequests();
+                } else {
+                    const data = await res.json();
+                    alert(data.message || `Failed to ${action} booking.`);
+                }
+            } catch (err) {
+                alert('An error occurred. Please try again.');
+                console.error(err);
             }
         }
 
+
         fetchBookingRequests();
     </script>
+
 </body>
 
 </html>
