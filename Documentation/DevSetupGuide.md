@@ -43,3 +43,16 @@
 
 3. Debug
     - Run: `npm start`
+
+##
+
+## Suggested debugging method
+### Webside
+- Use your favourite web browser on: localhost:8000
+
+### Api
+- Use postman
+- There are a postman collection: `RoomBookingSystem\H5 - Room Booking.postman_collection.json` 
+
+### App
+- Run `npm start` and an app opens
