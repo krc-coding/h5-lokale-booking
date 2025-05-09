@@ -7,10 +7,10 @@
 
 ### Setup
 1. Git clone
-    - Clone the project down on your machine
+    - Clone the project down on your machine (both project is in the same git repository)
     
-2. Install/update composer in project
-    - Using a terminal, navigate to `h5-lokale-booking/RoomBookingSystem` 
+2. Install composer in project
+    - Using a terminal, navigate to `h5-lokale-booking/RoomBookingSystem`
     - Run: `composer install`
 
 3. Make env
@@ -23,8 +23,23 @@
     - Create a new database with the same name as you used in your env
     - In the terminal run:
         * `php artisan migrate`
-        * `php artisan passport:keys`
+        * `php artisan passport:client --personal`
 
 5. Run debug
     - Run: `php artisan serve` 
 
+## App
+### Requirements
+- Npm
+
+### Setup
+1. Git clone
+    - Clone the project down on your machine (both project is in the same git repository)
+
+2. Install dependencies
+    - Using a terminal
+    - navigate to: `h5-lokale-booking/RoomBookingApp`
+    - Run: `npm ci`
+
+3. Debug
+    - Run: `npm start`
