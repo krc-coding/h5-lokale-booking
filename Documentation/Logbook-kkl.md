@@ -26,3 +26,9 @@
 
 ### 5-5-25
 - Continuing making room group management
+
+### 6-5-25
+- Improments to my pages
+
+### 7-5-25
+- More improments
