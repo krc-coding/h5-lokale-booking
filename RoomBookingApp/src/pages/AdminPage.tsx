@@ -45,11 +45,20 @@ const AdminPage = () => {
             });
     };
 
+    const deleteRoom = (roomId: number) => {
+        resourceManager.makeRequest("/api/room/delete/" + roomId, "DELETE").getResponse()
+            .then(() => {
+                setRooms(rooms.filter(room => room.id !== roomId));
+            }).catch((error) => {
+                console.error(error);
+            });
+    };
+
     return (
         <Box sx={{ height: "100%", width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
             <span>User management</span>
             <Divider sx={{ width: "100%", marginY: "10px" }} />
-            <Box sx={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+            <Box sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: "20px" }}>
                 {users.map((user) =>
                     <Card variant="outlined" sx={{
                         width: "200px",
@@ -63,7 +72,7 @@ const AdminPage = () => {
                         alignContent: "center"
                     }}>
                         <Box sx={{ height: "100%", width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-around" }}>
-                            <Box sx={{ marginBottom: "10px", width: "fit-content" }}>Name: {user?.username}</Box>
+                            <Box sx={{ width: "fit-content" }}>Name: {user?.username}</Box>
                             <Box sx={{ width: "fit-content" }}>Role: {user?.role}</Box>
                             <Box sx={{ width: "fit-content" }}>Disabled: {user?.disabled ? "yes" : "no"}</Box>
                             <Box>
@@ -75,9 +84,35 @@ const AdminPage = () => {
                 )}
                 <CreateUserDialog updateUsers={getUsers} />
             </Box>
-            <Divider sx={{ width: "100%", marginY: "10px" }} />
+            <Divider sx={{ width: "100%", marginY: "10px", borderWidth: "10px" }} />
             <span>Room management</span>
             <Divider sx={{ width: "100%", marginY: "10px" }} />
+            <Box sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: "20px" }}>
+                {rooms.map((room) =>
+                    <Card variant="outlined" sx={{
+                        width: "200px",
+                        height: "120px",
+
+                        backgroundColor: "#EDEDED",
+                        display: "flex",
+                        flexDirection: "column",
+                        flexWrap: "wrap",
+                        justifyContent: "space-around",
+                        alignContent: "center"
+                    }}>
+                        <Box sx={{ height: "100%", width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-around" }}>
+                            <Box sx={{ width: "fit-content" }}>Name: {room.name}</Box>
+                            <Box sx={{ width: "fit-content" }}>Room number: {room.room_number}</Box>
+                            <Box sx={{ width: "fit-content" }}>Max people: {room.max_people}</Box>
+                            <Box>
+                                {/* <EditUserDialog updateUsers={getUsers} room={room} /> */}
+                                <IconButton disabled={currentUser?.role !== "admin"} onClick={() => deleteRoom(room.id)}><Delete /></IconButton>
+                            </Box>
+                        </Box>
+                    </Card>
+                )}
+                <CreateUserDialog updateUsers={getUsers} />
+            </Box>
         </Box>
     );
 };
