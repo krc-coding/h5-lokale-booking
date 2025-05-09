@@ -6,13 +6,16 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import resourceManager from "../Utilities/ResourceManager";
+import { FormControlLabel, IconButton, MenuItem, Switch } from "@mui/material";
+import Edit from "@mui/icons-material/Edit";
 import { IUser } from "../types/IUser";
 
-interface IChangePasswordDialog {
-    user?: IUser;
+interface IEditUserDialog {
+    updateUsers: () => void;
+    user: IUser;
 }
 
-const ChangePasswordDialog = (props: IChangePasswordDialog) => {
+const EditUserDialog = (props: IEditUserDialog) => {
     const [open, setOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -26,12 +29,16 @@ const ChangePasswordDialog = (props: IChangePasswordDialog) => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (!props.user) return;
         setErrorMessage("");
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries((formData as any).entries());
-        const request = resourceManager.makeRequest("/api/user/changePassword/" + props.user.id, "PUT", JSON.stringify(formJson), { headers: { "Content-Type": "application/json" } });
-        request.getResponse().then((response) => {
+        const requestBody = {
+            role: formJson.role,
+            disabled: formJson.disabled == "on" ? true : false,
+        }
+        const request = resourceManager.makeRequest("/api/user/editUser/" + props.user.id, "PUT", JSON.stringify(requestBody), { headers: { "Content-Type": "application/json" } });
+        request.getResponse().then(() => {
+            props.updateUsers();
             handleCloseDialog();
         }).catch((error) => {
             setErrorMessage(error.response.data.error_message);
@@ -40,9 +47,7 @@ const ChangePasswordDialog = (props: IChangePasswordDialog) => {
 
     return (
         <React.Fragment>
-            <Button variant="contained" onClick={handleOpenDialog}>
-                Change password
-            </Button>
+            <IconButton onClick={handleOpenDialog}><Edit /></IconButton>
             <Dialog
                 open={open}
                 onClose={handleCloseDialog}
@@ -53,35 +58,22 @@ const ChangePasswordDialog = (props: IChangePasswordDialog) => {
                     },
                 }}
             >
-                <DialogTitle>Change password</DialogTitle>
+                <DialogTitle>Edit user</DialogTitle>
                 <DialogContent>
                     <TextField
                         required
+                        select
                         margin="dense"
-                        name="oldPassword"
-                        label="Old password"
-                        type="password"
+                        name="role"
+                        label="Role"
                         fullWidth
                         variant="standard"
-                    />
-                    <TextField
-                        required
-                        margin="dense"
-                        name="password"
-                        label="New password"
-                        type="password"
-                        fullWidth
-                        variant="standard"
-                    />
-                    <TextField
-                        required
-                        margin="dense"
-                        name="password_confirmation"
-                        label="New password (repeat)"
-                        type="password"
-                        fullWidth
-                        variant="standard"
-                    />
+                        defaultValue={"teacher"}
+                    >
+                        <MenuItem value={"admin"}>Admin</MenuItem>
+                        <MenuItem value={"teacher"}>Teacher</MenuItem>
+                    </TextField>
+                    <FormControlLabel control={<Switch defaultChecked={props.user.disabled ? true : false} />} name="disabled" label="Disabled" />
                     {errorMessage && <span>{errorMessage}</span>}
                 </DialogContent>
                 <DialogActions>
@@ -93,4 +85,4 @@ const ChangePasswordDialog = (props: IChangePasswordDialog) => {
     );
 }
 
-export default ChangePasswordDialog;
+export default EditUserDialog;
