@@ -6,6 +6,8 @@ import resourceManager from "../Utilities/ResourceManager";
 import CreateUserDialog from "../Components/UserManagementComponents/CreateUserDialog";
 import Delete from "@mui/icons-material/Delete";
 import EditUserDialog from "../Components/UserManagementComponents/EditUserDialog";
+import EditRoomDialog from "../Components/RoomManagementComponents/EditRoomDialog";
+import CreateRoomDialog from "../Components/RoomManagementComponents/CreateRoomDialog";
 
 const AdminPage = () => {
     const [currentUser, setCurrentUser] = useState<IUser>();
@@ -105,13 +107,13 @@ const AdminPage = () => {
                             <Box sx={{ width: "fit-content" }}>Room number: {room.room_number}</Box>
                             <Box sx={{ width: "fit-content" }}>Max people: {room.max_people}</Box>
                             <Box>
-                                {/* <EditUserDialog updateUsers={getUsers} room={room} /> */}
+                                <EditRoomDialog updateRooms={getRooms} room={room} />
                                 <IconButton disabled={currentUser?.role !== "admin"} onClick={() => deleteRoom(room.id)}><Delete /></IconButton>
                             </Box>
                         </Box>
                     </Card>
                 )}
-                <CreateUserDialog updateUsers={getUsers} />
+                <CreateRoomDialog updateRooms={getRooms} />
             </Box>
         </Box>
     );
