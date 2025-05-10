@@ -3,9 +3,9 @@ import { Box, Card, Divider, IconButton } from "@mui/material";
 import { IUser } from "../types/IUser";
 import { IRoom } from "../types/IRoom";
 import resourceManager from "../Utilities/ResourceManager";
-import CreateUserDialog from "../Components/CreateUserDialog";
+import CreateUserDialog from "../Components/UserManagementComponents/CreateUserDialog";
 import Delete from "@mui/icons-material/Delete";
-import EditUserDialog from "../Components/EditUserDialog";
+import EditUserDialog from "../Components/UserManagementComponents/EditUserDialog";
 
 const AdminPage = () => {
     const [currentUser, setCurrentUser] = useState<IUser>();

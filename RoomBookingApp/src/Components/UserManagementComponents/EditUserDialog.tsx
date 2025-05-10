@@ -5,10 +5,10 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import resourceManager from "../Utilities/ResourceManager";
+import resourceManager from "../../Utilities/ResourceManager";
 import { FormControlLabel, IconButton, MenuItem, Switch } from "@mui/material";
 import Edit from "@mui/icons-material/Edit";
-import { IUser } from "../types/IUser";
+import { IUser } from "../../types/IUser";
 
 interface IEditUserDialog {
     updateUsers: () => void;
@@ -35,7 +35,7 @@ const EditUserDialog = (props: IEditUserDialog) => {
         const requestBody = {
             role: formJson.role,
             disabled: formJson.disabled == "on" ? true : false,
-        }
+        };
         const request = resourceManager.makeRequest("/api/user/editUser/" + props.user.id, "PUT", JSON.stringify(requestBody), { headers: { "Content-Type": "application/json" } });
         request.getResponse().then(() => {
             props.updateUsers();

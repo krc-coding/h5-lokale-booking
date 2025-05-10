@@ -5,15 +5,14 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import resourceManager from "../Utilities/ResourceManager";
-import { IconButton, MenuItem } from "@mui/material";
-import Add from "@mui/icons-material/Add";
+import resourceManager from "../../Utilities/ResourceManager";
+import { IUser } from "../../types/IUser";
 
-interface ICreateUserDialog {
-    updateUsers: () => void;
+interface IChangePasswordDialog {
+    user?: IUser;
 }
 
-const CreateUserDialog = (props: ICreateUserDialog) => {
+const ChangePasswordDialog = (props: IChangePasswordDialog) => {
     const [open, setOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -27,12 +26,12 @@ const CreateUserDialog = (props: ICreateUserDialog) => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if (!props.user) return;
         setErrorMessage("");
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries((formData as any).entries());
-        const request = resourceManager.makeRequest("/api/user/createUser/", "POST", JSON.stringify(formJson), { headers: { "Content-Type": "application/json" } });
-        request.getResponse().then(() => {
-            props.updateUsers();
+        const request = resourceManager.makeRequest("/api/user/changePassword/" + props.user.id, "PUT", JSON.stringify(formJson), { headers: { "Content-Type": "application/json" } });
+        request.getResponse().then((response) => {
             handleCloseDialog();
         }).catch((error) => {
             setErrorMessage(error.response.data.error_message);
@@ -41,7 +40,9 @@ const CreateUserDialog = (props: ICreateUserDialog) => {
 
     return (
         <React.Fragment>
-            <IconButton sx={{ width: "40px", height: "40px", marginY: "auto", backgroundColor: "#1976d2", color: "#FFFFFF" }} onClick={handleOpenDialog}><Add /></IconButton>
+            <Button variant="contained" onClick={handleOpenDialog}>
+                Change password
+            </Button>
             <Dialog
                 open={open}
                 onClose={handleCloseDialog}
@@ -52,14 +53,14 @@ const CreateUserDialog = (props: ICreateUserDialog) => {
                     },
                 }}
             >
-                <DialogTitle>Create user</DialogTitle>
+                <DialogTitle>Change password</DialogTitle>
                 <DialogContent>
                     <TextField
                         required
                         margin="dense"
-                        name="username"
-                        label="Name"
-                        type="text"
+                        name="oldPassword"
+                        label="Old password"
+                        type="password"
                         fullWidth
                         variant="standard"
                     />
@@ -67,33 +68,29 @@ const CreateUserDialog = (props: ICreateUserDialog) => {
                         required
                         margin="dense"
                         name="password"
-                        label="Password"
+                        label="New password"
                         type="password"
                         fullWidth
                         variant="standard"
                     />
                     <TextField
                         required
-                        select
                         margin="dense"
-                        name="role"
-                        label="Role"
+                        name="password_confirmation"
+                        label="New password (repeat)"
+                        type="password"
                         fullWidth
                         variant="standard"
-                        defaultValue={"teacher"}
-                    >
-                        <MenuItem value={"admin"}>Admin</MenuItem>
-                        <MenuItem value={"teacher"}>Teacher</MenuItem>
-                    </TextField>
+                    />
                     {errorMessage && <span>{errorMessage}</span>}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog}>Cancel</Button>
-                    <Button type="submit">Create</Button>
+                    <Button type="submit">Update</Button>
                 </DialogActions>
             </Dialog>
         </React.Fragment>
     );
 }
 
-export default CreateUserDialog;
+export default ChangePasswordDialog;
