@@ -22,6 +22,14 @@ class UserController extends Controller
         return response()->json($users);
     }
 
+    public function getAllTeachers()
+    {
+        $users = User::where('role', 'teacher')
+            ->select('id', 'username')
+            ->get();
+        return response()->json($users);
+    }
+
     public function getUser(user $user)
     {
         $authUser = auth()->user();
