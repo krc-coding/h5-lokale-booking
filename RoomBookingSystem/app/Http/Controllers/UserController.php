@@ -14,7 +14,7 @@ class UserController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->role !== 'admin') {
+        if ($user->role !== 'admin' && $user->role !== 'systemAdmin') {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 

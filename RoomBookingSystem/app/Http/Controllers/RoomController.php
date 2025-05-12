@@ -48,7 +48,7 @@ class RoomController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'string|max:255',
+            'description' => 'nullable|string|max:255',
             'room_number' => 'required|string|max:255',
             'max_people' => 'required|integer',
         ]);
@@ -99,6 +99,10 @@ class RoomController extends Controller
         $user = auth()->user();
         if ($user->role !== "admin") {
             return response()->json(["message" => "Unauthorized"], 401);
+        }
+
+        if ($room->bookings()->exists()) {
+            return response()->json(['message' => 'Room still has booking'], 409);
         }
 
         $room->delete();
