@@ -31,7 +31,7 @@ function getMethodAndHeaders(method, body) {
 function Get(path, onSuccess) {
     fetch(path, getMethodAndHeaders('GET'))
         .then(async response => {
-            const data = await response.json().catch(() => ({}));
+            const data = await response.json().catch(() => {});
             if (!response.ok) {
                 alert(data.message || `Request failed with status ${response.status}`);
                 console.error(data.message || `Request failed with status ${response.status}`);
@@ -45,7 +45,7 @@ function Get(path, onSuccess) {
 function Post(path, data, onSuccess) {
     fetch(path, getMethodAndHeaders('POST', data))
         .then(async response => {
-            const data = await response.json().catch(() => ({}));
+            const data = await response.json().catch(() => {});
             if (!response.ok) {
                 alert(data.message || `Request failed with status ${response.status}`);
                 console.error(data.message || `Request failed with status ${response.status}`);
@@ -60,7 +60,7 @@ function Post(path, data, onSuccess) {
 function Put(path, data, onSuccess) {
     fetch(path, getMethodAndHeaders('PUT', data))
         .then(async response => {
-            const data = await response.json().catch(() => ({}));
+            const data = await response.json().catch(() => {});
             if (!response.ok) {
                 alert(data.message || `Request failed with status ${response.status}`);
                 console.error(data.message || `Request failed with status ${response.status}`);
@@ -75,7 +75,7 @@ function Put(path, data, onSuccess) {
 function Delete(path, onSuccess) {
     fetch(path, getMethodAndHeaders('DELETE'))
         .then(async response => {
-            const data = await response.json().catch(() => ({}));
+            const data = await response.json().catch(() => {});
             if (!response.ok) {
                 alert(data.message || `Request failed with status ${response.status}`);
                 console.error(data.message || `Request failed with status ${response.status}`);

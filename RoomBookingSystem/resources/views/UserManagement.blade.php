@@ -60,11 +60,17 @@
             <div class="custom-alert-box">
                 <p>Enter user details:</p>
                 <input id="username-input" type="text" placeholder="Username" /><br /><br />
-                <input id="role-input-new-user" type="text" placeholder="Role" /><br /><br />
 
                 <p id="password-not-matching-new-user" style="display: none; color: red;">Password doesn't match</p>
-                <input id="password-input" type="password" placeholder="password" /><br /><br />
+                <input id="password-input" type="password" placeholder="Password" /><br /><br />
                 <input id="password-confirmed-input" type="password" placeholder="Repeat password" /><br /><br />
+
+                <label>Role:</label>
+                <select id="role-input-new-user">
+                    <option value="admin">Admin</option>
+                    <option value="teacher">Teacher</option>
+                </select>
+                <br /><br />
 
                 <button onclick="submitAddUser()">Create</button>
                 <button onclick="closeAddUser()">Cancel</button>

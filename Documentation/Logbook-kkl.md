@@ -28,7 +28,13 @@
 - Continuing making room group management
 
 ### 6-5-25
-- Improments to my pages
+- Make the resource manager with crud
 
 ### 7-5-25
-- More improments
+- Add help functions to resource manager
+
+### 8-5-25
+- Merged add / remove rooms to group's modal
+
+### 9-5-25
+- Start making the dev setup guide
