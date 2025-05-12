@@ -80,3 +80,8 @@
 
 - Finalizedd room management.
 - Updated backend validation for update and create room endpoints, to allow empty description.
+
+## 12-05-2025
+
+- Started work on code documentation.
+- Created app user guide, for electron app.
