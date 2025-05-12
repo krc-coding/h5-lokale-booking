@@ -4,7 +4,7 @@ import { IRoom } from "../types/IRoom";
 import { IBooking } from "../types/IBooking";
 import { Box, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { BottomBox, EmptyBox, MiddleBox, TopBox } from "../Components/BookingBoxes";
-import CreateBookingDialog from "../Components/CreateBookingModal";
+import CreateBookingDialog from "../Components/CreateBookingDialog";
 
 const timePeriods = () => {
     const timePeriods = [];
