@@ -49,3 +49,6 @@
 
 ### 09-05-2025
 - finished making booking request page
+
+### 09-05-2025
+- started on documentation og code
