@@ -14,3 +14,5 @@ To create product repport pdf:
 mmdc -i ProductRepport.md -o ProductRepport-converted.md -e "png"
 pandoc ProductRepport-converted.md --toc -o ProductRepport.pdf
 ```
+
+If the markdown file contains images, then to ensure correct location of the images, add `-f markdown-implicit_figures` as an option to the pandoc command.
