@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Room Management</title>
     <link rel="stylesheet" href="{{ asset('css/Management.css') }}">
+    <script src="{{ asset('js/ResourceManager.js') }}"></script>
 </head>
 
 <body>
@@ -126,27 +127,15 @@
             </div>
         </div>
 
-        <!-- Add room to group modal -->
-        <div id="add-room-to-group-modal" class="custom-alert" style="display: none;">
+        <!-- Add and remove room to/from group modal -->
+        <div id="room-to-group-modal" class="custom-alert" style="display: none;">
             <div class="custom-alert-box">
-                <p>Add rooms:</p>
-                <form id="add-rooms-to-group"></form>
+                <p id="room-to-group-title">Add rooms:</p>
+                <form id="rooms-to-group"></form>
                 <br>
 
-                <button onclick="submitAddRoomToGroup()">Add</button>
-                <button onclick="closeAddRoomToGroup()">Cancel</button>
-            </div>
-        </div>
-
-        <!-- Remove room to group modal -->
-        <div id="remove-room-from-group-modal" class="custom-alert" style="display: none;">
-            <div class="custom-alert-box">
-                <p>Remove rooms:</p>
-                <form id="remove-rooms-from-group"></form>
-                <br>
-
-                <button onclick="submitRemoveRoomsFromGroup()">Remove</button>
-                <button onclick="closeRemoveRoomsFromGroup()">Cancel</button>
+                <button id="rooms-to-group-btn" onclick="submitRoomToGroup()">Add</button>
+                <button onclick="closeRoomToGroup()">Cancel</button>
             </div>
         </div>
     </div>
