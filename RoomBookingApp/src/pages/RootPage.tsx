@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import Header from "../Components/Header";
 import BookingPage from "./BookingPage";
 import ProfilePage from "./ProfilePage";
+import AdminPage from "./AdminPage";
 
 const RootPage = () => {
     const [currentPage, setCurrentPage] = useState("Dashboard");
@@ -14,6 +15,9 @@ const RootPage = () => {
             }
             {currentPage == "Profile" &&
                 <ProfilePage />
+            }
+            {currentPage == "Admin" &&
+                <AdminPage />
             }
         </Box>
     );
