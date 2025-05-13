@@ -85,3 +85,7 @@
 
 - Started work on code documentation.
 - Created app user guide, for electron app.
+
+## 13-05-2025
+
+- Continued working on code documentation for electron app.
