@@ -52,7 +52,7 @@ const CreateRoomDialog = (props: ICreateRoomDialog) => {
                     },
                 }}
             >
-                <DialogTitle>Create user</DialogTitle>
+                <DialogTitle>Create room</DialogTitle>
                 <DialogContent>
                     <TextField
                         required
