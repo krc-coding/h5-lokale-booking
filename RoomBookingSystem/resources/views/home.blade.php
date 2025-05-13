@@ -134,7 +134,7 @@
             }
         });
 
-        // Update the button text on page load based on token availability
+        // Update the buttons on page load based on token availability
         window.onload = function() {
             const authButton = document.getElementById('authButton');
             const userManageButton = document.getElementById('userManageButton');
