@@ -29,9 +29,9 @@ ipcMain.handle("authToken", (event: Electron.IpcMainEvent, args: { command: "get
             return "";
         }
     }
-})
+});
 
-ipcMain.on("authToken", (event: Electron.IpcMainEvent, args: { command: "get" | "save" | "delete"; token?: string; }) => {
+ipcMain.on("authToken", (event: Electron.IpcMainEvent, args: { command: "save" | "delete"; token?: string; }) => {
     if (args.command === "save") {
         if (args.token) {
             if (fs.existsSync(dataPath + "/authToken.json")) {
@@ -45,14 +45,5 @@ ipcMain.on("authToken", (event: Electron.IpcMainEvent, args: { command: "get" | 
             fs.unlinkSync(dataPath + "/authToken.json");
         }
         event.reply("authToken", { command: "delete", status: "success" });
-    } else if (args.command === "get") {
-        if (fs.existsSync(dataPath + "/authToken.json")) {
-            const file = fs.readFileSync(dataPath + "/authToken.json").toString();
-            const data = JSON.parse(file);
-
-            return data.authToken;
-        } else {
-            return "";
-        }
     }
 });
