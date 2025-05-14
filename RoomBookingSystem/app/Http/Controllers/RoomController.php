@@ -19,17 +19,17 @@ class RoomController extends Controller
     {
         return Room::all()->mapInto(RoomResource::class);
     }
-   
+
     public function getRoomsAndTodayBookings()
     {
         $today = Carbon::today();
         $tomorrow = Carbon::tomorrow();
-    
+
         $rooms = Room::with(['bookings' => function ($query) use ($today, $tomorrow) {
             $query->whereBetween('start_time', [$today, $tomorrow])
-                  ->orderBy('start_time', 'asc');
+                ->orderBy('start_time', 'asc');
         }])->get();
-    
+
         return view('home', compact('rooms'));
     }
 
@@ -72,7 +72,7 @@ class RoomController extends Controller
 
         $request->validate([
             'name' => 'string|max:255',
-            'description' => 'string|max:255',
+            'description' => 'nullable|string|max:255',
             'room_number' => 'string|max:255',
             'max_people' => 'integer',
         ]);

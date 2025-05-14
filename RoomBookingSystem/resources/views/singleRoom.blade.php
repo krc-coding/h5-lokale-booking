@@ -15,8 +15,12 @@
         </a>
 
         <div style="position: absolute; top: 20px; right: 20px;">
-            <button class="btn btn-primary mb-3" id="authButton" onclick="showLoginModal()">Login</button>
             <button class="btn btn-primary mb-3" id="userManageButton" style="display: none;">User management</button>
+            <button class="btn btn-primary mb-3" id="RoomGroupManageButton" style="display: none;">Room/Group
+                management</button>
+            <button id="bookingRequestButton" class="btn btn-primary mb-3" style="display: none;">Booking
+                Requests</button>
+            <button class="btn btn-primary mb-3" id="authButton" onclick="showLoginModal()">Login</button>
         </div>
 
         <h1 class="mb-1">{{ $room->name }}</h1>
@@ -141,15 +145,24 @@
         window.onload = function() {
             const authButton = document.getElementById('authButton');
             const userManageButton = document.getElementById('userManageButton');
+            const roomGroupButton = document.getElementById('RoomGroupManageButton');
+            const bookingRequestButton = document.getElementById('bookingRequestButton');
+
             const token = localStorage.getItem('authToken');
             if (token) {
-                authButton.textContent = 'Profile';
-                authButton.setAttribute('onclick',
-                    'window.location.href = "/profile";');
+                authButton.textContent = 'Logout';
+                authButton.setAttribute('onclick', 'localStorage.removeItem("authToken"); window.location.href = "/"');
+                authButton.classList.remove('btn-primary');
+                authButton.classList.add('btn-danger');
 
                 userManageButton.style.display = '';
-                userManageButton.setAttribute('onclick',
-                    'window.location.href = "/userManagement";');
+                userManageButton.setAttribute('onclick', 'window.location.href = "/userManagement";');
+
+                roomGroupButton.style.display = '';
+                roomGroupButton.setAttribute('onclick', 'window.location.href = "/RoomGroupManagement";');
+
+                bookingRequestButton.style.display = '';
+                bookingRequestButton.setAttribute('onclick', 'window.location.href = "/bookingRequests";');
             }
         };
     </script>

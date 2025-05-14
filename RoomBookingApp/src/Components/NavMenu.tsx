@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Button from '@mui/material/Button';
 import { Divider, Menu, MenuItem } from "@mui/material";
 import resourceManager from "../Utilities/ResourceManager";
+import { IUser } from "../types/IUser";
 
 interface INavMenu {
     setIsAuthed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -10,6 +11,7 @@ interface INavMenu {
 }
 
 const NavMenu = (props: INavMenu) => {
+    const user: IUser = JSON.parse(document.body.dataset["user"] ?? "{}");
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
@@ -23,6 +25,7 @@ const NavMenu = (props: INavMenu) => {
 
     const logout = () => {
         window.api.deleteAuthToken();
+        setPage("Dashboard");
         const request = resourceManager.makeRequest("/api/logout", "POST");
         request.getResponse().then(() => {
             props.setIsAuthed(false);
@@ -53,6 +56,7 @@ const NavMenu = (props: INavMenu) => {
             >
                 <MenuItem disabled={props.currentPage == "Dashboard"} onClick={() => setPage("Dashboard")}>Dashboard</MenuItem>
                 <MenuItem disabled={props.currentPage == "Profile"} onClick={() => setPage("Profile")}>Profile</MenuItem>
+                <MenuItem disabled={props.currentPage == "Admin" || (user.role !== "admin" && user.role !== "systemAdmin")} onClick={() => setPage("Admin")}>Admin</MenuItem>
                 <Divider sx={{ my: 0.5 }} />
                 <MenuItem onClick={logout}>Logout</MenuItem>
             </Menu>
