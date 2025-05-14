@@ -176,12 +176,6 @@ function submitUserEdit() {
 
     if (window.userEdit) {
         let userEdit = window.userEdit;
-        if (userEdit.role === 'systemAdmin' && userEdit.role !== role) {
-            closeUserEdit();
-            alert(`You can not update ${userEdit.username}, only disable this user.`);
-            return;
-        }
-
         if (userRole !== 'admin' && userEdit.id !== getUserId()) {
             closeUserEdit();
             alert('You are not allowed to update this user.');

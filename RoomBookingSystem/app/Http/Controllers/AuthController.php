@@ -17,17 +17,21 @@ class AuthController extends Controller
         ]);
 
         if (!auth()->attempt($data)) {
-            return response(['error_message' => 'Incorrect username or password.'], 401);
+            return response()->json(['error_message' => 'Incorrect username or password.'], 401);
         }
 
         $user = auth()->user();
 
+        if ($user->disabled) {
+            return response()->json(['error_message' => 'Incorrect username or password.'], 401);
+        }
+
         $token = $user->createToken('API Token')->accessToken;
 
-        return response(['user' => $user, 'token' => $token]);
+        return response()->json(['user' => $user, 'token' => $token]);
     }
 
-    public function logout()
+    public static function logout()
     {
         $user = auth()->user();
         $userTokens = $user->tokens;

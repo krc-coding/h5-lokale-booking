@@ -79,8 +79,8 @@ class UserController extends Controller
         }
 
         $validated = $request->validate([
-            'disabled' => 'boolean',
-            'role' => 'string|in:teacher,admin',
+            'disabled' => 'nullable|boolean',
+            'role' => 'nullable|string|in:teacher,admin',
         ]);
 
         $user->disabled = $validated['disabled'] ?? $user->disabled;
@@ -89,6 +89,11 @@ class UserController extends Controller
         }
 
         $user->save();
+
+        if ($user->disabled) {
+            AuthController::logout();
+        }
+
         return response()->json(['message' => 'User updated successfully', 'user' => $user], 200);
     }
 
