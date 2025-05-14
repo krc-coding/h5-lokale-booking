@@ -38,3 +38,9 @@
 
 ### 9-5-25
 - Start making the dev setup guide
+
+### 12-5-25 and 13-5-25
+- Continue making the dev setup guide
+
+### 14-5-25
+- Start making the backend code documentation
