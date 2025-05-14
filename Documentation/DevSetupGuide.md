@@ -50,9 +50,9 @@
 2. Start app
     - Run: `npm start`
 
-##
+---
 
-# Additionally development tool
+## Additionally development tool
 ### Api
 - Postman
 - There are a postman collection: `RoomBookingSystem\H5 - Room Booking.postman_collection.json`

@@ -34,7 +34,7 @@ class AuthController extends Controller
     public function logout()
     {
         $user = auth()->user();
-        AuthController::logoutUser($user);
+        self::logoutUser($user);
     }
     
     public static function logoutUser(User $user) {
