@@ -5,8 +5,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import resourceManager from "../Utilities/ResourceManager";
-import { IUser } from "../types/IUser";
+import resourceManager from "../../Utilities/ResourceManager";
+import { IUser } from "../../types/IUser";
 
 interface IChangePasswordDialog {
     user?: IUser;
@@ -33,9 +33,6 @@ const ChangePasswordDialog = (props: IChangePasswordDialog) => {
         const request = resourceManager.makeRequest("/api/user/changePassword/" + props.user.id, "PUT", JSON.stringify(formJson), { headers: { "Content-Type": "application/json" } });
         request.getResponse().then((response) => {
             handleCloseDialog();
-            // resourceManager.setAuthTokenHeader(response.data.token);
-            // window.api.saveAuthToken(response.data.token);
-            // document.body.dataset["user"] = JSON.stringify(response.data.user);
         }).catch((error) => {
             setErrorMessage(error.response.data.error_message);
         });

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Card } from "@mui/material";
 import { IUser } from "../types/IUser";
-import ChangePasswordDialog from "../Components/ChangePasswordDialog";
+import ChangePasswordDialog from "../Components/UserManagementComponents/ChangePasswordDialog";
 
 const ProfilePage = () => {
     const [user, setUser] = useState<IUser>();

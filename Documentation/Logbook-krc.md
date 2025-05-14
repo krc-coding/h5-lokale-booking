@@ -59,3 +59,24 @@
 
 - Created system admin user migration.
 - Created simple profile page.
+
+## 07-05-2025
+
+- Started working on admin page.
+- Had some troubles with focus, so didn't get much done.
+
+## 08-05-2025
+
+- Created user management section on admin page.
+- Removed left over code in password dialog.
+- Started work on room management section in admin page.
+
+## 09-05-2025
+
+- Continued work on room management section.
+- Played Bingo with H1, and won.
+
+## 10-05-2025
+
+- Finalizedd room management.
+- Updated backend validation for update and create room endpoints, to allow empty description.
