@@ -92,5 +92,8 @@
 
 ## 14-05-2025
 
-- Continued working on code documentation.
+- Finished working on code documentation.
 - Meeting with group to work on finalizing product repport.
+- Added missing features from electron app, to missing features file.
+- Created initial structure for process report.
+- Added tech stack and database diagram.
