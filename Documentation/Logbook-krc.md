@@ -89,3 +89,8 @@
 ## 13-05-2025
 
 - Continued working on code documentation for electron app.
+
+## 14-05-2025
+
+- Continued working on code documentation.
+- Meeting with group to work on finalizing product repport.
