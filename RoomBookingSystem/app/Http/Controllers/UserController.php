@@ -91,7 +91,7 @@ class UserController extends Controller
         $user->save();
 
         if ($user->disabled) {
-            AuthController::logout();
+            AuthController::logoutUser($user);
         }
 
         return response()->json(['message' => 'User updated successfully', 'user' => $user], 200);

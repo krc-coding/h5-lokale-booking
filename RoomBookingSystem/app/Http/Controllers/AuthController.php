@@ -31,9 +31,13 @@ class AuthController extends Controller
         return response()->json(['user' => $user, 'token' => $token]);
     }
 
-    public static function logout()
+    public function logout()
     {
         $user = auth()->user();
+        AuthController::logoutUser($user);
+    }
+    
+    public static function logoutUser(User $user) {
         $userTokens = $user->tokens;
         foreach ($userTokens as $token) {
             $token->revoke();
