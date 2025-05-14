@@ -209,4 +209,36 @@ return (
 
 ## IPC controller
 
-The ipc controller can be found in: `RoomBookingApp/src/Utilities/ipcController.ts`
+The ipc controller is split into two sections, the first section which is used by the main node process, is located in: `RoomBookingApp/src/Utilities/ipcController.ts`  
+The second part is in: `RoomBookingApp/src/preload.ts`
+
+### Main process ipc controller
+
+
+```ts
+ipcMain.on("authToken", (event: Electron.IpcMainEvent, args: { command: "get" | "save" | "delete"; token?: string; }) => {
+    if (args.command === "save") {
+        if (args.token) {
+            if (fs.existsSync(dataPath + "/authToken.json")) {
+                fs.unlinkSync(dataPath + "/authToken.json");
+            }
+            fs.writeFileSync(dataPath + "/authToken.json", JSON.stringify({ authToken: args.token }));
+        }
+        event.reply("authToken", { command: "save", status: "success" });
+    } else if (args.command === "delete") {
+        if (fs.existsSync(dataPath + "/authToken.json")) {
+            fs.unlinkSync(dataPath + "/authToken.json");
+        }
+        event.reply("authToken", { command: "delete", status: "success" });
+    } else if (args.command === "get") {
+        if (fs.existsSync(dataPath + "/authToken.json")) {
+            const file = fs.readFileSync(dataPath + "/authToken.json").toString();
+            const data = JSON.parse(file);
+
+            return data.authToken;
+        } else {
+            return "";
+        }
+    }
+});
+```
