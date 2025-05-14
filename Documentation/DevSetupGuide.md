@@ -1,5 +1,4 @@
 # Dev setup guide
-## In
 ### Requirements
 - php 8.3.x NTS (Not Thread Safe)
 - Composer
@@ -7,7 +6,7 @@
 - Npm
 - Node
 
-#### Git clone
+### Git clone
 - Repository: <https://github.com/krc-coding/h5-lokale-booking>
 - As a dev:
     - Clone the project
