@@ -16,7 +16,7 @@
     </div>
 
     <div class="grid" id="requestsGrid">
-        <!-- Booking card template -->
+        <!-- Template for each booking request card -->
         <template id="request-card-template">
             <div class="card">
                 <h2 class="booking-title"></h2>
@@ -36,6 +36,8 @@
         function changePage(page) {
             window.location.href = page;
         }
+
+        // Fetches booking requests and populates the UI
         async function fetchBookingRequests() {
             const token = localStorage.getItem('authToken');
             if (!token) return alert('You must be logged in.');
@@ -49,10 +51,10 @@
             const user = await userRes.json();
             const isAdmin = user.role === 'admin';
 
+            // Choose the correct endpoint based on user role
             const endpoint = isAdmin ?
-                '/api/bookingRequest' // For admins: all requests
-                :
-                '/api/bookingRequest/received'; // For teachers: assigned requests
+                '/api/bookingRequest' : // Admin gets all requests
+                '/api/bookingRequest/received'; // Teachers get only assigned requests
 
             const res = await fetch(endpoint, {
                 headers: {
@@ -66,6 +68,8 @@
             const template = document.getElementById('request-card-template');
 
             grid.innerHTML = '';
+
+            // Loop through each request and populate the card
             requests.forEach(req => {
                 const clone = template.content.cloneNode(true);
 
@@ -75,17 +79,18 @@
                 clone.querySelector('.booking-room').textContent = req.room?.name ?? 'Unknown';
                 clone.querySelector('.booking-desc').textContent = req.description || '-';
 
-                // Set up button actions
+                // Attach event listeners for approve and deny buttons
                 clone.querySelector('.approve-btn').addEventListener('click', () => handleAction('approve', req
                     .id));
                 clone.querySelector('.deny-btn').addEventListener('click', () => handleAction('delete', req
-                .id));
+                    .id));
 
                 grid.appendChild(clone);
             });
 
         }
 
+        // Handles approve or deny actions for a booking request
         async function handleAction(action, id) {
             const token = localStorage.getItem('authToken');
             const url = action === 'delete' ?
@@ -104,7 +109,7 @@
 
                 if (res.ok) {
                     alert(`Booking ${action}d successfully.`);
-                    fetchBookingRequests();
+                    fetchBookingRequests(); // Refresh the list
                 } else {
                     const data = await res.json();
                     alert(data.message || `Failed to ${action} booking.`);
@@ -115,7 +120,7 @@
             }
         }
 
-
+        // Initial fetch of booking requests when the page loads
         fetchBookingRequests();
     </script>
 
