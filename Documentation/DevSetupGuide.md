@@ -33,7 +33,7 @@
         * `php artisan migrate`
         * `php artisan passport:client --personal`
 
-4. Run debug
+4. Start web sever / backend
     - Run: `php artisan serve`
 
 ## App
@@ -47,7 +47,7 @@
     - navigate to: `/RoomBookingApp`
     - Run: `npm ci`
 
-2. Debug
+2. Start app
     - Run: `npm start`
 
 ##
