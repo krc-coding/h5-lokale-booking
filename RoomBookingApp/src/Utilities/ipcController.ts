@@ -10,6 +10,7 @@ import path from "path";
 const homedir = os.homedir();
 const dataPath = path.resolve(homedir + "/.room_booking_system/data");
 
+// Handles creating the data forlder incase it doesn't exists.
 if (!fs.existsSync(homedir + "/.room_booking_system")) {
     fs.mkdirSync(homedir + "/.room_booking_system");
 }
@@ -17,7 +18,7 @@ if (!fs.existsSync(homedir + "/.room_booking_system/data")) {
     fs.mkdirSync(homedir + "/.room_booking_system/data");
 }
 
-ipcMain.handle("authToken", (event: Electron.IpcMainEvent, args: { command: "get" | "save" | "delete"; }) => {
+ipcMain.handle("authToken", (event: Electron.IpcMainEvent, args: { command: "get"; }) => {
     if (args.command === "get") {
         if (fs.existsSync(dataPath + "/authToken.json")) {
             const file = fs.readFileSync(dataPath + "/authToken.json").toString();
