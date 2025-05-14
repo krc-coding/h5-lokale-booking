@@ -4,8 +4,13 @@ import { IRoom } from "../types/IRoom";
 import { IBooking } from "../types/IBooking";
 import { Box, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { BottomBox, EmptyBox, MiddleBox, TopBox } from "../Components/BookingBoxes";
-import CreateBookingDialog from "../Components/CreateBookingModal";
+import CreateBookingDialog from "../Components/CreateBookingDialog";
 
+/**
+ * Creates an array of all valid timestamps between 7 and 17 both inclusive, the timestamps are in 30 minutes intervals.
+ * 
+ * @returns array of timestamps. 
+ */
 const timePeriods = () => {
     const timePeriods = [];
     for (let timePeriod = 700; timePeriod < 1700; timePeriod += 30) {
@@ -39,6 +44,7 @@ const BookingPage = () => {
             const data = response.data as IBooking[];
             const bookings: IBooking[] = [];
             if (data.length > 0) {
+                // Loops through the response data to convert the date strings into date objects.
                 data.forEach(booking => {
                     const newBooking: IBooking = {
                         ...booking,
@@ -47,7 +53,11 @@ const BookingPage = () => {
                     }
                     bookings.push(newBooking);
                 });
+
+                // Sorts the bookings based on start time, this is important for when checking booking overlaps.
                 bookings.sort((a, b) => a.start_time.getTime() - b.start_time.getTime());
+
+                // Checks for booking overlaps and sets the booking index to prevent overlaps.
                 let bookingIndex = 0;
                 bookings.forEach((booking) => {
                     const overlapBookings = bookings.filter((tempBooking) => {
@@ -89,6 +99,7 @@ const BookingPage = () => {
         periodDateTime.setSeconds(0);
         periodDateTime.setMilliseconds(0);
 
+        // Gets all the bookings relevant for today.
         const filteredBookings = bookings.filter((booking) => {
             const startMinutesRatio = booking.start_time.getMinutes() / 60;
             const endMinutesRatio = booking.end_time.getMinutes() / 60;
@@ -104,6 +115,8 @@ const BookingPage = () => {
                 end_time > periodDateTime
             );
         });
+
+        // Sorts the bookings by index, to make it easier to render.
         filteredBookings.sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
         return (
@@ -150,6 +163,7 @@ const BookingPage = () => {
                         }
                     }
 
+                    // Renders the entire timestamp row.
                     return (
                         <React.Fragment
                             key={booking.id}

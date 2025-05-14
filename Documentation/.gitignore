@@ -1,3 +1,4 @@
 *.png
 *-converted.md
 !estimated_timeplan_*.png
+!Assets/**
