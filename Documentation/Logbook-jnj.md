@@ -54,4 +54,4 @@
 - started on documentation og code
 
 ### 13-05-2025
-- continued with documentation
+- created user guide
