@@ -214,9 +214,29 @@ The second part is in: `RoomBookingApp/src/preload.ts`
 
 ### Main process ipc controller
 
+The ipc controlller or inter process communication controller, is used by the main process, and configures listeners for events sent by the rendere process.  
+
+The `handle` method on the ipcMain object, is designed to handle an event from the renderer process and return a response directly to the caller.  
+The `on` method is designed to get an event and handle it in the background, and then send a new event to the renderer process when finished.
+
+The ipc controller here is currently only setup to handle actions related to auth tokens.  
+But it could easily be updated to also handle other features like offline support on the booking pages.
 
 ```ts
-ipcMain.on("authToken", (event: Electron.IpcMainEvent, args: { command: "get" | "save" | "delete"; token?: string; }) => {
+ipcMain.handle("authToken", (event: Electron.IpcMainEvent, args: { command: "get"; }) => {
+    if (args.command === "get") {
+        if (fs.existsSync(dataPath + "/authToken.json")) {
+            const file = fs.readFileSync(dataPath + "/authToken.json").toString();
+            const data = JSON.parse(file);
+
+            return data.authToken;
+        } else {
+            return "";
+        }
+    }
+});
+
+ipcMain.on("authToken", (event: Electron.IpcMainEvent, args: { command: "save" | "delete"; token?: string; }) => {
     if (args.command === "save") {
         if (args.token) {
             if (fs.existsSync(dataPath + "/authToken.json")) {
@@ -230,15 +250,6 @@ ipcMain.on("authToken", (event: Electron.IpcMainEvent, args: { command: "get" | 
             fs.unlinkSync(dataPath + "/authToken.json");
         }
         event.reply("authToken", { command: "delete", status: "success" });
-    } else if (args.command === "get") {
-        if (fs.existsSync(dataPath + "/authToken.json")) {
-            const file = fs.readFileSync(dataPath + "/authToken.json").toString();
-            const data = JSON.parse(file);
-
-            return data.authToken;
-        } else {
-            return "";
-        }
     }
 });
 ```
