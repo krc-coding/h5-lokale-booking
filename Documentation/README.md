@@ -12,7 +12,7 @@ pandoc case.md -o case.pdf
 To create product repport pdf: 
 ```shell
 mmdc -i ProductRepport.md -o ProductRepport-converted.md -e "png"
-pandoc ProductRepport-converted.md --toc -o ProductRepport.pdf
+pandoc ProductRepport-converted.md --toc -f markdown-implicit_figures --listings -H listings-setup.tex -V geometry:"left=3cm, top=2cm, right=3cm, bottom=2cm" -V fontsize=12pt -o ProductRepport.pdf
 ```
 
 If the markdown file contains images, then to ensure correct location of the images, add `-f markdown-implicit_figures` as an option to the pandoc command.
