@@ -97,3 +97,7 @@
 - Added missing features from electron app, to missing features file.
 - Created initial structure for process report.
 - Added tech stack and database diagram.
+
+## 15-05-2025
+
+- Worked on product repport.
