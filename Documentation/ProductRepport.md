@@ -71,7 +71,6 @@ Student (Guest):
 ## User management:
 
 - Profile view:
-    - Option for changing username.
     - Option for changing password.
 
 - User management view:
@@ -147,12 +146,14 @@ Student (Guest):
 
 ## Web page:
 
-- Should only contain views relevant for students/guests.
+- Should contain views relevant for students/guests.
+- Should have a login option for teachers and admins.
+- Should contain pages for teachers and admins to easily manage bookings and other parts of the room booking system.
 
 ## App:
 
 - Should contain views relevant for students/guests.
-- Should contain a login page for teachers and admins.
+- Should have a login option for teachers and admins.
 - Should contain pages for teachers and admins to easily manage bookings and other parts of the room booking system.
 
 ## Nice to have features:
@@ -556,7 +557,7 @@ After starting the app for the first time, you should see something like this:
 
 ### Admins:
 
-For teachers and admins to be able to more, they need to login, which can be done through the login button in the top right of the app.
+For teachers and admins to be able to do more, they need to login, which can be done through the login button in the top right of the app.
 
 *On a fresh setup there only exists one user, which is the system admin user*
 
@@ -614,7 +615,8 @@ The code docs are written, with the assumption of some basic knowlegde in the fo
 
 ## Booking controller
 
-The code for the following can be found in `RoomBookingSystem\app\Http\Controllers\BookingController.php`.
+The code for the following can be found in  
+`RoomBookingSystem\app\Http\Controllers\BookingController.php`.
 
 ### Create booking
 
@@ -676,7 +678,8 @@ public function createBooking(Request $request)
 
 ## Group controller
 
-The code for the following can be found in `RoomBookingSystem\app\Http\Controllers\GroupController.php`.
+The code for the following can be found in  
+`RoomBookingSystem\app\Http\Controllers\GroupController.php`.
 
 ### Create group
 
@@ -711,11 +714,13 @@ public function createGroup(Request $request)
 
 ## Room controller
 
-The code for the following can be found in `RoomBookingSystem\app\Http\Controllers\RoomController.php`.
+The code for the following can be found in  
+`RoomBookingSystem\app\Http\Controllers\RoomController.php`.
 
 ### Show room
 
-Take a room id and find the room, returns the html from: `RoomBookingSystem\resources\views\singleRoom.blade.php`, after running all the php code.
+Take a room id and find the room, returns the html from:  
+`RoomBookingSystem\resources\views\singleRoom.blade.php`, after running all the php code.
 
 ```php
 public function showRoom($id)
@@ -750,7 +755,8 @@ public function deleteRoom(Room $room)
 
 ## Api routes
 
-The code for the following can be found in `RoomBookingSystem\routes\api.php`.
+The code for the following can be found in  
+`RoomBookingSystem\routes\api.php`.
 
 ### Routes
 
@@ -777,7 +783,8 @@ Route::prefix('booking')->group(function () {
 
 ## Resources
 
-The code for the following can be found in `RoomBookingSystem\app\Http\Resources\BookingResource.php`.
+The code for the following can be found in  
+`RoomBookingSystem\app\Http\Resources\BookingResource.php`.
 
 This is what you want to you if want to filter in the data you want to send the user, this make an 1 to 1 of the data. 
 
@@ -805,7 +812,8 @@ public function toArray(Request $request): array
 
 ### Group and room ralation table
 
-The code for the following can be found in `RoomBookingSystem\database\migrations\2025_04_23_062905_create_rooms_groups_table.php`.
+The code for the following can be found in  
+`RoomBookingSystem\database\migrations\2025_04_23_062905_create_rooms_groups_table.php`.
 
 It makes two rows with an foreign key.
 
@@ -821,7 +829,8 @@ public function up(): void
 
 ### Default user
 
-The code for the following can be found in `RoomBookingSystem\database\migrations\2025_05_06_063628_create_system_admin_user.php`.
+The code for the following can be found in  
+`RoomBookingSystem\database\migrations\2025_05_06_063628_create_system_admin_user.php`.
 
 This is the system admin creation and the only place where a user can get an other role then Admin and Teacher.
 
