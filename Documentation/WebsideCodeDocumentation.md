@@ -1,22 +1,13 @@
 
-# 📘 Code Documentation for Room Booking System
+# Code Documentation for Room Booking System
 
 This documentation describes the implementation details of a time-based booking grid web interface, including the **home page**, **booking requests page**, and **single room page**.
 
 ---
 
-## 📜 Table of Contents
+## Home Page (Room Booking System)
 
-1. [🏠 Home Page (Room Booking System)](#🏠-home-page-room-booking-system)
-2. [📋 Booking Requests Page](#📋-booking-requests-page)
-3. [🏢 Single Room Page](#🏢-single-room-page)
-4. [🗣 Booking Modal (For Room Booking)](#🗣-booking-modal-for-room-booking)
-
----
-
-## 🏠 Home Page (Room Booking System)
-
-### 🗂 Initial Setup
+### Initial Setup
 
 The room grid and associated time slots are dynamically populated using JavaScript. Data is passed as JSON from Blade templates:
 
@@ -30,7 +21,7 @@ const bookingsByRoom = @json($rooms->mapWithKeys(fn($r) => [$r->id => $r->bookin
 
 ---
 
-### 🕒 Time Slot Rendering
+### Time Slot Rendering
 
 Time slots from 00:00 to 24:00 are displayed at 30-minute intervals.
 
@@ -49,7 +40,7 @@ for (let h = startHour; h < endHour; h++) {
 
 ---
 
-### 📦 Booking Block Placement
+### Booking Block Placement
 
 Each booking is rendered dynamically based on its start time:
 
@@ -66,7 +57,7 @@ if (b.start >= slotStart && b.start < slotEnd) {
 
 ---
 
-### 🔒 Token Handling and UI
+### Token Handling and UI
 
 UI elements adapt based on authentication status:
 
@@ -85,9 +76,9 @@ window.onload = function() {
 
 ---
 
-## 📋 Booking Requests Page
+## Booking Requests Page
 
-### 🗂 Fetching and Rendering Requests
+### Fetching and Rendering Requests
 
 Booking requests are fetched based on user role and rendered dynamically:
 
@@ -104,7 +95,7 @@ async function fetchBookingRequests() {
 
 ---
 
-### 🛠 Approve and Deny Actions
+### Approve and Deny Actions
 
 Users can approve or deny requests using API calls:
 
@@ -124,9 +115,9 @@ async function handleAction(action, id) {
 
 ---
 
-## 🏢 Single Room Page
+## Single Room Page
 
-### 🗂 Room Schedule Rendering
+### Room Schedule Rendering
 
 Displays room bookings over a date range:
 
@@ -146,7 +137,7 @@ while (currentDate <= finalDate) {
 
 ---
 
-### 🗓 Date Range Control
+### Date Range Control
 
 User selects a custom date range to view room bookings:
 
@@ -164,9 +155,9 @@ document.getElementById("endDate").value = formatDateInput(nextWeek);
 
 ---
 
-## 🗣 Booking Modal (For Room Booking)
+## Booking Modal (For Room Booking)
 
-### 👥 Dynamic Form Fields
+### Dynamic Form Fields
 
 Logged-in and guest users see different booking fields:
 
@@ -189,7 +180,7 @@ if (!isLoggedIn) {
 
 ---
 
-### 🛠 Booking Form Submission
+### Booking Form Submission
 
 Form submits to different endpoints based on login status:
 
