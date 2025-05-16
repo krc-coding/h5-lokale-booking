@@ -253,6 +253,7 @@ There are still some features we haven't fully implemented, in both the app and 
 Originally we wanted to have the electron app, contain all features related to teachers and admins, but to make sure that we had enough tasks, we decided that all features should be made on both the app and website, it also makes more sense to have all features available on both the app and website.
 
 We ran out of time, to fully implement all features, some of the missing features are:
-    - Editting bookings.
-    - Recurring bookings.
-    - viewing all bookings for different days.
+
+* Editting bookings.
+* Recurring bookings.
+* viewing all bookings for different days.
