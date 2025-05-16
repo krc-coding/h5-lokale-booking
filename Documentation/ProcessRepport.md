@@ -1,3 +1,7 @@
+---
+title: Process report
+---
+
 # Process Report
 
 ## Estimated timeplan
@@ -6,13 +10,131 @@
 
 ![estimated timeplan 2](Assets/ProcessReport/estimated_timeplan_2.png){ width=50%}
 
+---
+
 ## Actual timeplan
 
 ![actual timeplan 1](Assets/ProcessReport/actual_timeplan_1.png){ width=50%}
 
 ![actual timeplan 2](Assets/ProcessReport/actual_timeplan_2.png){ width=50%}
 
+---
+
 ## Logbooks
+
+### KKL Logbook
+
+#### 22-04-2025
+- Helped creating case
+- Created laravel project
+- Created auth controller
+- Make system use jwt tokens
+
+#### 23-04-2025
+- Created migrations
+- Created CRUD room controller
+
+#### 24-04-25 -> 28-04-25
+- Fixed a git merge conflict
+- Created CRUD booking controller
+
+#### 29-04-25
+- Start making user management on the app
+
+#### 30-04-25
+- Continuing making user management in webside
+
+#### 1-5-25
+- Continuing making user management
+
+#### 2-5-25
+- Start making room group management in webside
+
+#### 5-5-25
+- Continuing making room group management
+
+#### 6-5-25
+- Make the resource manager with crud
+
+#### 7-5-25
+- Add help functions to resource manager
+
+#### 8-5-25
+- Merged add / remove rooms to group's modal
+
+#### 9-5-25
+- Start making the dev setup guide
+
+#### 12-5-25 and 13-5-25
+- Continue making the dev setup guide
+
+#### 14-5-25
+- Start making the backend code documentation
+
+#### 15-5-25
+- Continue making the backend code documentation
+
+#### 16-5-25
+- Help with the final documentation
+
+---
+
+### JNJ Logbook
+
+#### 22-04-2025
+- Helped creating case
+- Created laravel project
+- Created auth controller
+- Make system use jwt tokens
+
+#### 23-04-2025
+- Created migrations
+- Created CRUD room controller
+
+#### 24-04-25 -> 28-04-25
+- Fixed a git merge conflict
+- Created CRUD booking controller
+
+#### 29-04-25
+- Start making user management on the app
+
+#### 30-04-25
+- Continuing making user management in webside
+
+#### 1-5-25
+- Continuing making user management
+
+#### 2-5-25
+- Start making room group management in webside
+
+#### 5-5-25
+- Continuing making room group management
+
+#### 6-5-25
+- Make the resource manager with crud
+
+#### 7-5-25
+- Add help functions to resource manager
+
+#### 8-5-25
+- Merged add / remove rooms to group's modal
+
+#### 9-5-25
+- Start making the dev setup guide
+
+#### 12-5-25 and 13-5-25
+- Continue making the dev setup guide
+
+#### 14-5-25
+- Start making the backend code documentation
+
+#### 15-5-25
+- Continue making the backend code documentation
+
+#### 16-5-25
+- Help with the final documentation
+
+---
 
 ### KRC Logbook
 
@@ -118,4 +240,19 @@
 
 - Worked on product repport.
 
+#### 16-05-2025
+
+- Worked on process repport.
+
+---
+
 ## Conclusion
+
+We have achieved most of our goals, in making the room booking system.  
+There are still some features we haven't fully implemented, in both the app and website.  
+Originally we wanted to have the electron app, contain all features related to teachers and admins, but to make sure that we had enough tasks, we decided that all features should be made on both the app and website, it also makes more sense to have all features available on both the app and website.
+
+We ran out of time, to fully implement all features, some of the missing features are:
+    - Editting bookings.
+    - Recurring bookings.
+    - viewing all bookings for different days.
