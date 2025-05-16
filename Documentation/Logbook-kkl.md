@@ -44,3 +44,9 @@
 
 ### 14-5-25
 - Start making the backend code documentation
+
+### 15-5-25
+- Continue making the backend code documentation
+
+### 16-5-25
+- Help with the final documentation
