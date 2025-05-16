@@ -51,7 +51,16 @@
 - finished making booking request page
 
 ### 12-05-2025
-- started on documentation og code
+- started on documentation
 
 ### 13-05-2025
 - created user guide
+
+### 14-05-2025
+- Worked on documentation
+
+### 15-05-2025
+- worked on documentation
+
+### 16-05-2025
+- worked on documentation

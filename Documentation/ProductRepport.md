@@ -386,6 +386,14 @@ There are three user types, each with different responsibilities:
 - **Teachers**: Can log in to book rooms and manage booking requests submitted by students.
 - **Admins**: Have full access to manage rooms and teacher accounts.
 
+System admin login info:
+
+* The user name: `System Admin`
+* The password: `Merc1234!`
+
+The system admin is similar to admins, but can only create new users.  
+> **Note:** the system admin is needed to create the initial admin account and should be dissabled after
+
 ---
 
 ## Student Guide
