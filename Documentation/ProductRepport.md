@@ -370,7 +370,8 @@ erDiagram
 ### Api
 
 - Postman.
-- There are a postman collection: `RoomBookingSystem\H5 - Room Booking.postman_collection.json`
+- There are a postman collection:  
+`RoomBookingSystem\H5 - Room Booking.postman_collection.json`
 
 ---
 
